@@ -1,88 +1,96 @@
 'use client'
-import React, { useRef, useState } from 'react'
+
+import React from 'react'
 import { motion } from 'framer-motion'
-import { ScanEye, Glasses, Shield } from 'lucide-react'
+import { Eye, Glasses, ShieldCheck } from 'lucide-react'
 
 const benefits = [
-  { icon: <ScanEye size={24} />, title: 'Expert Diagnosis', desc: 'Computerized precision eye testing' },
-  { icon: <Glasses size={24} />, title: 'Premium Eyewear', desc: '200+ curated frame collection' },
-  { icon: <Shield size={24} />, title: 'Vision Protection', desc: 'Personalized vision solutions' },
+  {
+    icon: Eye,
+    title: 'Expert Eye Care',
+    desc: 'Computerized precision diagnostics',
+  },
+  {
+    icon: Glasses,
+    title: 'Premium Eyewear',
+    desc: '200+ curated designer frames',
+  },
+  {
+    icon: ShieldCheck,
+    title: 'Trusted Results',
+    desc: '15+ years of clinical excellence',
+  },
 ]
 
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.15,
+    },
+  },
+}
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.6,
+      ease: [0.25, 0.1, 0.25, 1] as const,
+    },
+  },
+}
+
 export function BenefitsStrip() {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [coords, setCoords] = useState({ x: 0, y: 0 })
-  const [isHovered, setIsHovered] = useState(false)
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return
-    const rect = containerRef.current.getBoundingClientRect()
-    setCoords({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    })
-  }
-
   return (
-    <section className="relative z-30 -mt-12 md:-mt-16 lg:-mt-20 py-0 px-6 lg:px-8">
+    <section className="relative z-30 -mt-10 md:-mt-16 lg:-mt-20 px-6 lg:px-8">
       <div className="max-w-content mx-auto">
-        <div
-          ref={containerRef}
-          onMouseMove={handleMouseMove}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
-          className="relative overflow-hidden bg-gradient-to-br from-[#06ACE4] via-[#000A30] to-[#000724] 
-                     rounded-3xl border border-white/10 shadow-2xl p-8 lg:p-12 
-                     grid grid-cols-1 md:grid-cols-[1fr_auto_1fr_auto_1fr] gap-8 lg:gap-10 items-center transition-all duration-300"
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+          className="relative overflow-hidden bg-[#FBF8F3]/90 backdrop-blur-md rounded-3xl 
+                     border border-[#C9A96E]/20 shadow-[0_15px_45px_rgba(201,169,110,0.12)] p-8 lg:p-10 
+                     grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-4 items-center"
         >
-          {/* Spotlight Effect (radial light fade) */}
-          {isHovered && (
-            <div
-              className="absolute pointer-events-none transition-opacity duration-300 z-0"
-              style={{
-                width: '600px',
-                height: '600px',
-                background: 'radial-gradient(circle, rgba(6, 172, 228, 0.15) 0%, rgba(6, 172, 228, 0) 70%)',
-                left: `${coords.x - 300}px`,
-                top: `${coords.y - 300}px`,
-              }}
-            />
-          )}
-
-          {/* Large gaussian blur light glow - bottom right corner */}
-          <div className="absolute bottom-0 right-0 w-[300px] h-[300px] pointer-events-none z-0" style={{
-            background: 'radial-gradient(circle at 80% 80%, rgba(6,172,228,0.32) 0%, rgba(6,172,228,0.1) 45%, transparent 75%)',
-            filter: 'blur(45px)',
-          }} />
-
-          {benefits.map((item, i) => (
-            <React.Fragment key={i}>
-              {/* Vertical divider between items (md+ only) */}
-              {i > 0 && (
-                <div className="hidden md:flex items-center justify-center">
-                  <div className="w-px h-16 bg-gradient-to-b from-transparent via-white/20 to-transparent" />
-                </div>
-              )}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.15 }}
-                className="relative z-10 flex items-start gap-4 group cursor-pointer"
-              >
-                <div className="w-12 h-12 rounded-xl bg-sky-400/10 text-sky-300 border border-sky-400/20
-                                flex items-center justify-center flex-shrink-0 transition-all duration-300 
-                                group-hover:scale-110 group-hover:bg-sky-400/20 group-hover:shadow-[0_0_15px_rgba(56,189,248,0.2)]">
-                  {item.icon}
-                </div>
-                <div>
-                  <h3 className="font-semibold text-white mb-1 transition-colors duration-300 group-hover:text-sky-300">{item.title}</h3>
-                  <p className="text-sm text-sky-100/70 transition-colors duration-300 group-hover:text-white">{item.desc}</p>
-                </div>
-              </motion.div>
-            </React.Fragment>
-          ))}
-        </div>
+          {benefits.map((benefit, i) => {
+            const Icon = benefit.icon
+            return (
+              <React.Fragment key={i}>
+                <motion.div
+                  variants={itemVariants}
+                  className="relative z-10 flex items-start gap-5 group cursor-pointer"
+                >
+                  <div className="w-14 h-14 rounded-2xl bg-[#C9A96E]/10 text-[#C9A96E] border border-[#C9A96E]/25
+                                  flex items-center justify-center flex-shrink-0 transition-all duration-400 
+                                  group-hover:scale-110 group-hover:bg-[#C9A96E] group-hover:text-white 
+                                  group-hover:shadow-[0_8px_20px_rgba(201,169,110,0.3)]"
+                  >
+                    <Icon size={26} className="transition-transform duration-300" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="font-serif text-lg font-medium text-[#010E3D] mb-1.5 transition-colors duration-300 group-hover:text-[#C9A96E]">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-sm text-[#010E3D]/60 font-sans leading-relaxed">
+                      {benefit.desc}
+                    </p>
+                  </div>
+                </motion.div>
+                
+                {/* Visual vertical divider on desktop, horizontal on mobile if needed (using borders) */}
+                {i < 2 && (
+                  <div className="hidden md:block absolute top-1/2 -translate-y-1/2 w-px h-12 bg-[#C9A96E]/15" 
+                       style={{ left: `${(i + 1) * 33.33}%` }} 
+                  />
+                )}
+              </React.Fragment>
+            )
+          })}
+        </motion.div>
       </div>
     </section>
   )

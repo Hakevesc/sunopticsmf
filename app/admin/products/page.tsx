@@ -144,7 +144,7 @@ export default function AdminProductsPage() {
                   <td className="p-4">
                     <div className="flex gap-1 flex-wrap">
                       {glass.lens_category_slugs?.map(slug => (
-                        <span key={slug} className="px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-medium">
+                        <span key={slug} className="px-2 py-0.5 rounded-full bg-[#C9A96E]/10 text-[#C9A96E] text-[10px] font-medium">
                           {lensCategoriesMap[slug]}
                         </span>
                       ))}
