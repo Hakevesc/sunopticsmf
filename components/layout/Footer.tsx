@@ -35,8 +35,8 @@ export function Footer() {
               {socialLinks.map((social) => (
                 <a key={social.label} href={social.href} target="_blank" rel="noopener noreferrer"
                   className="w-9 h-9 rounded-full border border-white/15 
-                             flex items-center justify-center text-primary-300
-                             hover:bg-primary hover:border-primary hover:text-white
+                             flex items-center justify-center text-[#C9A96E]/70
+                             hover:bg-[#C9A96E] hover:border-[#C9A96E] hover:text-white
                              transition-all duration-300"
                   aria-label={social.label}>
                   <SocialIcon label={social.label} />
@@ -53,7 +53,7 @@ export function Footer() {
               {quickLinks.map((link) => (
                 <li key={link}>
                   <Link href={`/${link.toLowerCase()}`}
-                    className="text-sm text-white/50 hover:text-white 
+                    className="text-sm text-white/50 hover:text-[#C9A96E] 
                                transition-colors duration-200">
                     {link}
                   </Link>
@@ -79,13 +79,13 @@ export function Footer() {
             <h4 className="text-[11px] font-semibold uppercase tracking-[0.2em] 
                            text-white/30 mb-5">Contact</h4>
             <div className="space-y-3 text-sm text-white/50">
-              <a href="tel:+251902642222" className="block hover:text-primary-300 transition-colors duration-200">
+              <a href="tel:+251902642222" className="block hover:text-[#C9A96E]/80 transition-colors duration-200">
                 0902 642 222
               </a>
-              <a href="tel:+251902642223" className="block hover:text-primary-300 transition-colors duration-200">
+              <a href="tel:+251902642223" className="block hover:text-[#C9A96E]/80 transition-colors duration-200">
                 0902 642 223
               </a>
-              <a href="mailto:sunopticsmeskelflower@gmail.com" className="block hover:text-primary-300 transition-colors duration-200">
+              <a href="mailto:sunopticsmeskelflower@gmail.com" className="block hover:text-[#C9A96E]/80 transition-colors duration-200">
                 sunopticsmeskelflower@gmail.com
               </a>
               <p>Meskel Flower Branch, Addis Ababa</p>
@@ -103,9 +103,9 @@ export function Footer() {
             &copy; {new Date().getFullYear()} SunOptics Eye Clinic. All rights reserved.
           </p>
           <div className="flex gap-6">
-            <Link href="/privacy" className="text-xs text-white/25 hover:text-white/50 
+            <Link href="/privacy" className="text-xs text-white/25 hover:text-[#C9A96E]/50 
                                             transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="text-xs text-white/25 hover:text-white/50 
+            <Link href="/terms" className="text-xs text-white/25 hover:text-[#C9A96E]/50 
                                            transition-colors">Terms of Service</Link>
           </div>
         </div>

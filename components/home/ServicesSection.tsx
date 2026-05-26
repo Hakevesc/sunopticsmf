@@ -1,93 +1,144 @@
 'use client'
+
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, ScanEye, Glasses } from 'lucide-react'
+import { ArrowRight, ScanEye, Glasses, type LucideIcon } from 'lucide-react'
 
-const services = [
+interface Service {
+  id: string
+  name: string
+  description: string
+  icon: LucideIcon
+  image: string
+}
+
+const services: Service[] = [
   {
     id: 'computerized-eye-testing',
-    name_en: 'Computerized Eye Testing',
-    description_en: 'Advanced digital refraction technology for precise prescriptions. Our state-of-the-art equipment ensures accurate diagnosis and personalized vision solutions.',
-    icon_name: 'scan-eye',
-    image_url: '/Assets/eye-test.jpg',
+    name: 'Computerized Eye Testing',
+    description:
+      'Advanced digital refraction technology for precise prescriptions. Our state-of-the-art equipment ensures accurate diagnosis and personalized vision solutions.',
+    icon: ScanEye,
+    image: '/Assets/eye-test.jpg',
   },
   {
     id: 'optical-dispensary',
-    name_en: 'Optical Dispensary',
-    description_en: 'Browse our curated collection of premium frames and precision-crafted lenses. Expert fitting and personalized style consultation included.',
-    icon_name: 'glasses',
-    image_url: '/Assets/glass-choice.jpg',
+    name: 'Optical Dispensary',
+    description:
+      'Browse our curated collection of premium frames and precision-crafted lenses. Expert fitting and personalized style consultation included.',
+    icon: Glasses,
+    image: '/Assets/glass-choice.jpg',
   },
 ]
 
-function DynamicIcon({ name, size = 22 }: { name: string; size?: number }) {
-  switch (name) {
-    case 'scan-eye':
-      return <ScanEye size={size} />
-    case 'glasses':
-      return <Glasses size={size} />
-    default:
-      return <ScanEye size={size} />
-  }
+const easeOutExpo = [0.16, 1, 0.3, 1] as const
+
+const containerVariants = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.18,
+    },
+  },
+}
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.8,
+      ease: easeOutExpo,
+    },
+  },
 }
 
 export function ServicesSection() {
   return (
-    <section className="py-section bg-snow">
-      <div className="max-w-content mx-auto px-6 lg:px-8">
-        <div className="text-center mb-16 flex flex-col items-center">
-          <p className="pretitle">What We Offer</p>
-          <div className="section-heading justify-center">
-            <span className="section-heading-dark">Exceptional Eye Care</span>
-            <span className="section-heading-box">Services</span>
-          </div>
-        </div>
+    <section className="bg-white py-16 md:py-[120px]">
+      <div className="mx-auto max-w-7xl px-6 lg:px-8">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-60px' }}
+          transition={{ duration: 0.8, ease: easeOutExpo }}
+          className="mb-14 text-center md:mb-16"
+        >
+          {/* Eyebrow */}
+          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#C9A96E]">
+            What We Offer
+          </p>
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {services.map((service, i) => (
-            <motion.div
-              key={service.id}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: i * 0.15 }}
-              className="group bg-white rounded-2xl overflow-hidden border border-gray-100
-                         hover:shadow-xl hover:-translate-y-1
-                         transition-all duration-500 ease-out-expo"
-            >
-              {/* Image area */}
-              <div className="relative aspect-[16/9] overflow-hidden rounded-t-2xl">
-                <Image src={service.image_url} alt={service.name_en}
-                  fill className="object-cover transition-transform duration-700
-                                  group-hover:scale-105"
-                  sizes="(max-width: 768px) 100vw, 50vw" />
-                <div className="absolute inset-0 bg-gradient-to-t
-                                from-charcoal/40 to-transparent" />
-              </div>
-              {/* Content */}
-              <div className="p-8">
-                <div className="w-12 h-12 rounded-xl bg-primary-light text-primary
-                                flex items-center justify-center mb-4
-                                group-hover:bg-primary group-hover:text-white
-                                transition-colors duration-300">
-                  <DynamicIcon name={service.icon_name} size={22} />
+          {/* Heading */}
+          <h2 className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-4xl font-light tracking-tight text-[#1a1a2e] md:text-5xl">
+            <span>Exceptional Eye Care</span>
+            <span className="inline-block rounded-full bg-[#C9A96E] px-5 py-1.5 text-[0.6em] font-semibold tracking-wide text-white">
+              Services
+            </span>
+          </h2>
+        </motion.div>
+
+        {/* Cards Grid */}
+        <motion.div
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-60px' }}
+          className="grid gap-8 md:grid-cols-2"
+        >
+          {services.map((service) => {
+            const Icon = service.icon
+            return (
+              <motion.div
+                key={service.id}
+                variants={cardVariants}
+                className="group overflow-hidden rounded-2xl border border-[#f0ebe3] bg-white transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_-12px_rgba(120,90,50,0.15)]"
+              >
+                {/* Image */}
+                <div className="relative aspect-[16/10] overflow-hidden">
+                  <Image
+                    src={service.image}
+                    alt={service.name}
+                    fill
+                    className="object-cover transition-transform duration-700 will-change-transform group-hover:scale-105"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                 </div>
-                <h3 className="text-xl font-bold text-charcoal mb-3">
-                  {service.name_en}
-                </h3>
-                <p className="text-gray-500 leading-relaxed mb-6">
-                  {service.description_en}
-                </p>
-                <Link href={`/services#${service.id}`}
-                  className="inline-flex items-center gap-2 text-primary text-sm 
-                             font-medium group-hover:gap-3 transition-all duration-300">
-                  Learn More <ArrowRight size={14} />
-                </Link>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+
+                {/* Content */}
+                <div className="p-7 md:p-8">
+                  {/* Icon */}
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#C9A96E]/10 text-[#C9A96E] transition-colors duration-300 group-hover:bg-[#C9A96E]/15">
+                    <Icon size={22} strokeWidth={1.8} />
+                  </div>
+
+                  <h3 className="mb-3 text-xl font-semibold tracking-tight text-[#1a1a2e]">
+                    {service.name}
+                  </h3>
+
+                  <p className="mb-6 leading-relaxed text-[#7a7a8e]">
+                    {service.description}
+                  </p>
+
+                  <Link
+                    href={`/services#${service.id}`}
+                    className="group/link inline-flex items-center gap-2 text-sm font-semibold text-[#C9A96E] transition-all duration-300 hover:gap-3"
+                  >
+                    <span className="relative">
+                      Learn More
+                      <span className="absolute -bottom-0.5 left-0 h-[1.5px] w-0 bg-[#C9A96E] transition-all duration-300 group-hover/link:w-full" />
+                    </span>
+                    <ArrowRight size={14} className="transition-transform duration-300 group-hover/link:translate-x-0.5" />
+                  </Link>
+                </div>
+              </motion.div>
+            )
+          })}
+        </motion.div>
       </div>
     </section>
   )

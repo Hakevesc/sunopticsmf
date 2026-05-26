@@ -1,12 +1,11 @@
 import { HeroCarousel } from '@/components/home/HeroCarousel'
 import { BenefitsStrip } from '@/components/home/BenefitsStrip'
 import { EditorialSplit } from '@/components/home/EditorialSplit'
+import { ServicesSection } from '@/components/home/ServicesSection'
+import { EyewearShowcase } from '@/components/home/EyewearShowcase'
 import { StatsCounter } from '@/components/home/StatsCounter'
 import { TestimonialsCarousel } from '@/components/home/TestimonialsCarousel'
 import { CTABanner } from '@/components/home/CTABanner'
-
-// Services section placeholder (inline for now)
-import { ServicesSection } from '@/components/home/ServicesSection'
 
 export default function HomePage() {
   return (
@@ -15,6 +14,7 @@ export default function HomePage() {
       <BenefitsStrip />
       <EditorialSplit />
       <ServicesSection />
+      <EyewearShowcase />
       <StatsCounter />
       <TestimonialsCarousel />
       <CTABanner />

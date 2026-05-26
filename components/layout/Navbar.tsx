@@ -11,10 +11,10 @@ function NavLink({ href, children, isLight }: { href: string; children: React.Re
   return (
     <Link href={href} className="group relative">
       <span className={`text-sm font-medium tracking-wide transition-colors duration-300
-        ${isLight ? 'text-white/90 hover:text-white' : 'text-charcoal hover:text-primary'}`}>
+        ${isLight ? 'text-white/90 hover:text-white' : 'text-charcoal hover:text-[#C9A96E]'}`}>
         {children}
       </span>
-      <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-primary 
+      <span className="absolute -bottom-1 left-1/2 w-0 h-0.5 bg-[#C9A96E] 
                        rounded-full transition-all duration-300 ease-out-expo
                        group-hover:w-full group-hover:left-0" />
     </Link>
@@ -70,10 +70,10 @@ export function Navbar() {
         <div className="hidden lg:flex items-center gap-4">
           <LanguageSwitcher isLight={!isScrolled} />
           <Link href="/book"
-            className="bg-[#06ACE4] text-white rounded-full px-7 py-2.5 text-sm 
+            className="bg-[#C9A96E] text-white rounded-full px-7 py-2.5 text-sm 
                        font-medium tracking-wide
-                       hover:bg-[#0592c2] hover:shadow-[0_8px_24px_rgba(6,172,228,0.35)] 
-                       active:bg-[#047ea8]
+                       hover:bg-[#B8965A] hover:shadow-[0_8px_24px_rgba(201,169,110,0.35)] 
+                       active:bg-[#A8864A]
                        transform hover:-translate-y-0.5 active:translate-y-0
                        transition-all duration-300">
             Book Appointment
@@ -125,7 +125,7 @@ export function Navbar() {
               >
                 <Link
                   href={`/${link === 'Book Appointment' ? 'book' : link.toLowerCase().replace(' ', '-')}`}
-                  className="text-3xl font-bold text-white hover:text-primary 
+                  className="text-3xl font-bold text-white hover:text-[#C9A96E] 
                              transition-colors"
                   onClick={() => setIsMobileOpen(false)}
                 >
@@ -135,10 +135,10 @@ export function Navbar() {
             ))}
             {/* Social icons at bottom */}
             <div className="absolute bottom-12 flex gap-6">
-              <a href="https://web.facebook.com/sunopticsmeskelflower" target="_blank" rel="noopener" className="text-white/40 hover:text-primary transition-colors">FB</a>
-              <a href="https://www.instagram.com/sun_optics_meskel_flower" target="_blank" rel="noopener" className="text-white/40 hover:text-primary transition-colors">IG</a>
-              <a href="https://www.tiktok.com/@sunopticsmeskelflower" target="_blank" rel="noopener" className="text-white/40 hover:text-primary transition-colors">TK</a>
-              <a href="https://t.me/Sunopticsmeskelflowerbranch" target="_blank" rel="noopener" className="text-white/40 hover:text-primary transition-colors">TG</a>
+              <a href="https://web.facebook.com/sunopticsmeskelflower" target="_blank" rel="noopener" className="text-white/40 hover:text-[#C9A96E] transition-colors">FB</a>
+              <a href="https://www.instagram.com/sun_optics_meskel_flower" target="_blank" rel="noopener" className="text-white/40 hover:text-[#C9A96E] transition-colors">IG</a>
+              <a href="https://www.tiktok.com/@sunopticsmeskelflower" target="_blank" rel="noopener" className="text-white/40 hover:text-[#C9A96E] transition-colors">TK</a>
+              <a href="https://t.me/Sunopticsmeskelflowerbranch" target="_blank" rel="noopener" className="text-white/40 hover:text-[#C9A96E] transition-colors">TG</a>
             </div>
           </motion.div>
         )}
