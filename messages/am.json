@@ -1,0 +1,90 @@
+{
+  "nav": {
+    "about":    "ስለ እኛ",
+    "services": "አገልግሎቶች",
+    "products": "ምርቶች",
+    "contact":  "አድራሻ",
+    "book":     "ቀጠሮ ያስይዙ"
+  },
+  "hero": {
+    "tagline":   "ሳምቪዥን ስፔሻሊቲ አይን ክሊኒክ & ኦፕቲካል ዎርክስ",
+    "headline":  "ዓይናችሁን እናስተምናለን",
+    "subtitle":  "በአዲስ አበባ ልብ ውስጥ ልምድ ያለው የዓይን ሕክምና እና ዘመናዊ መነጽሮች።",
+    "cta":       "የዓይን ሐኪም ይቁረጡ"
+  },
+  "benefits": {
+    "diagnosis":   "ባለሙያ ምርመራ",
+    "diagnosisDesc": "የኮምፒዩተራይዝድ ትክክለኛ የዓይን ምርመራ",
+    "eyewear":     "ፕሪሚየም መነጽሮች",
+    "eyewearDesc": "200+ የተመረጡ የመነፅር ስብስብ",
+    "protection":  "ራዕይ ጥበቃ",
+    "protectionDesc": "ለግል የተበጁ የራዕይ መፍትሄዎች"
+  },
+  "about": {
+    "pretitle":  "ስለ ሳምቪዥን",
+    "headline":  "ራዕይን ማሳደግ፣ ሕይወትን መለወጥ",
+    "text1":     "በሳምቪዥን ራዕይ ከሁሉ ይበልጥ ውድ ስሜታችን እንደሆነ እናምናለን።",
+    "text2":     "በአዲስ አበባ መስቀል ፍላወር ልብ ውስጥ የሚገኘው ክሊኒካችን ዘመናዊ ቴክኖሎጂን ከፕሪሚየም መነፅሮች ጋር ያዋህዳል።",
+    "cta":       "ታሪካችንን ይገኙ"
+  },
+  "services": {
+    "pretitle":  "የምንሰጠው",
+    "headline":  "ልዩ የዓይን ሕክምና አገልግሎቶች"
+  },
+  "products": {
+    "heroPretitle": "የእኛ ስብስብ",
+    "heroTitle": "ፕሪሚየም መነጽሮች",
+    "heroSubtitle": "የተመረጡ የመነፅር ስብስባችንን ያግኙ - ለምቾት የተነደፉ፣ በስታይል የተሰሩ።",
+    "framesFound": "{count} መነጽር ተገኝቷል",
+    "framesFoundPlural": "{count} መነጽሮች ተገኝተዋል",
+    "noFrames": "ከምርጫዎ ጋር የሚስማማ መነጽር አልተገኘም",
+    "tryAdjusting": "ከላይ ያሉትን ማጣሪያዎች ያስተካክሉ",
+    "lensCategories": {
+      "all": "ሁሉም",
+      "correctYourVision": "ራዕይዎን ያስተካክሉ",
+      "protectYourEyes": "ዓይኖትዎን ይጠብቁ",
+      "enhanceYourVision": "ራዕይዎን ያሻሽሉ"
+    },
+    "needs": {
+      "all": "ሁሉም",
+      "forKids": "ለልጆች",
+      "nearVision": "የቅርብ ራዕይ",
+      "farVision": "የሩቅ ራዕይ",
+      "blueLightProtection": "ሰማያዊ ብርሃን ጥበቃ",
+      "sunProtection": "የፀሐይ ጥበቃ",
+      "lightSensitivity": "የብርሃን ስሜት",
+      "lensDurability": "የሌንስ ጥንካሬ"
+    },
+    "frameShapes": {
+      "all": "ሁሉም መነጽሮች",
+      "catEyeButterfly": "ካት-አይ / ቢራቢሮ",
+      "roundedRectangle": "ክብ አራት ማዕዘን",
+      "roundOval": "ክብ / ሞላላ",
+      "wayfarerSquare": "ዌይፋረር / ካሬ",
+      "sunglasses": "የፀሐይ መነጽሮች",
+      "rectangle": "አራት ማዕዘን",
+      "modifiedRectangle": "የተሻሻለ አራት ማዕዘን"
+    }
+  },
+  "booking": {
+    "title":       "ቀጠሮ ያስይዙ",
+    "step1":       "አገልግሎት ይምረጡ",
+    "step2":       "ቀን እና ሰዓት ይምረጡ",
+    "step3":       "መረጃዎ",
+    "submit":      "አሁን ያስይዙ",
+    "success":     "ቀጠሮ ተረጋግጧል!",
+    "successDesc": "ቀጠሮዎን ለማረጋገጥ እናገኝዎታለን።"
+  },
+  "footer": {
+    "quickLinks": "ፈጣን አገናኞች",
+    "services":   "አገልግሎቶች",
+    "contact":    "አድራሻ",
+    "copyright":  "መብቱ የተጠበቀ ነው።",
+    "privacy":    "የግላዊነት ፖሊሲ",
+    "terms":      "የአገልግሎት ውል"
+  },
+  "cta": {
+    "readyTitle":    "ለተሻለ ራዕይ ዝግጁ ነዎት?",
+    "readySubtitle": "ዛሬውኑ የተሟላ የዓይን ምርመራዎን ያስይዙ።"
+  }
+}

@@ -1,0 +1,90 @@
+{
+  "nav": {
+    "about":    "About",
+    "services": "Services",
+    "products": "Products",
+    "contact":  "Contact",
+    "book":     "Book Appointment"
+  },
+  "hero": {
+    "tagline":   "SunOptics Speciality Eye Clinic & Optical Works",
+    "headline":  "We Care For Your Eyes",
+    "subtitle":  "Expert eye care and modern eyewear in the heart of Addis Ababa.",
+    "cta":       "Book Eye Care Professional"
+  },
+  "benefits": {
+    "diagnosis":   "Expert Diagnosis",
+    "diagnosisDesc": "Computerized precision eye testing",
+    "eyewear":     "Premium Eyewear",
+    "eyewearDesc": "200+ curated frame collection",
+    "protection":  "Vision Protection",
+    "protectionDesc": "Personalized vision solutions"
+  },
+  "about": {
+    "pretitle":  "About SunOptics",
+    "headline":  "Evolving Vision, Transforming Lives",
+    "text1":     "At SunOptics, we believe that sight is our most precious sense.",
+    "text2":     "Located in the heart of Addis Ababa at Meskel Flower, our clinic combines advanced diagnostic technology with a curated collection of premium eyewear.",
+    "cta":       "Discover Our Story"
+  },
+  "services": {
+    "pretitle":  "What We Offer",
+    "headline":  "Exceptional Eye Care Services"
+  },
+  "products": {
+    "heroPretitle": "Our Collection",
+    "heroTitle": "Premium Eyewear",
+    "heroSubtitle": "Discover our curated selection of frames — designed for comfort, crafted for style.",
+    "framesFound": "{count} frame found",
+    "framesFoundPlural": "{count} frames found",
+    "noFrames": "No frames match your criteria",
+    "tryAdjusting": "Try adjusting the filters above",
+    "lensCategories": {
+      "all": "All",
+      "correctYourVision": "Correct Your Vision",
+      "protectYourEyes": "Protect Your Eyes",
+      "enhanceYourVision": "Enhance Your Vision"
+    },
+    "needs": {
+      "all": "All",
+      "forKids": "For Kids",
+      "nearVision": "Near Vision",
+      "farVision": "Far Vision",
+      "blueLightProtection": "Blue Light Protection",
+      "sunProtection": "Sun Protection",
+      "lightSensitivity": "Light Sensitivity",
+      "lensDurability": "Lens Durability"
+    },
+    "frameShapes": {
+      "all": "All Frames",
+      "catEyeButterfly": "Cat-Eye / Butterfly",
+      "roundedRectangle": "Rounded Rectangle",
+      "roundOval": "Round / Oval",
+      "wayfarerSquare": "Wayfarer / Square",
+      "sunglasses": "Sunglasses",
+      "rectangle": "Rectangle",
+      "modifiedRectangle": "Modified Rectangle"
+    }
+  },
+  "booking": {
+    "title":       "Book an Appointment",
+    "step1":       "Select Service",
+    "step2":       "Select Date & Time",
+    "step3":       "Your Details",
+    "submit":      "Book Now",
+    "success":     "Booking Confirmed!",
+    "successDesc": "We'll contact you to confirm your appointment."
+  },
+  "footer": {
+    "quickLinks": "Quick Links",
+    "services":   "Services",
+    "contact":    "Contact",
+    "copyright":  "All rights reserved.",
+    "privacy":    "Privacy Policy",
+    "terms":      "Terms of Service"
+  },
+  "cta": {
+    "readyTitle":    "Ready for Better Vision?",
+    "readySubtitle": "Book your comprehensive eye examination today."
+  }
+}

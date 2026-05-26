@@ -1,0 +1,297 @@
+
+/* ─── Premium Design Tokens ─── */
+:root {
+  /* Brand Colors - Luxury Midnight Navy Theme */
+  --color-primary:          #010E3D; /* Sophisticated deep midnight sapphire */
+  --color-primary-dark:     #000A30; /* High-end dark navy */
+  --color-primary-darker:   #000724;
+  --color-primary-light:    #E0F4FE; /* Soft ice-blue */
+  --color-primary-lighter:  #F0F9FF;
+  --color-accent:           #06ACE4; /* Sleek secondary sky blue */
+
+  /* Neutrals - Modern Slate */
+  --color-black:            #0D0D0D;
+  --color-charcoal:         #010E3D; /* Deep modern slate/ink */
+  --color-slate:            #374151;
+  --color-gray:             #6B7280;
+  --color-gray-light:       #9CA3AF;
+  --color-silver:           #D1D5DB;
+  --color-pearl:            #F8FAFC; /* Premium cool grey */
+  --color-snow:             #F1F5F9; /* Crisp background light slate */
+  --color-white:            #FFFFFF;
+
+  /* Accent / Semantic */
+  --color-success:          #059669;
+  --color-success-light:    #D1FAE5;
+  --color-warning:          #D97706;
+  --color-warning-light:    #FEF3C7;
+  --color-error:            #DC2626;
+  --color-error-light:      #FEE2E2;
+
+  /* Gradients */
+  --gradient-hero:          linear-gradient(135deg, #010E3D 0%, #010E3D 50%, #000A30 100%);
+  --gradient-primary:       linear-gradient(135deg, #010E3D 0%, #06ACE4 100%);
+  --gradient-text:          linear-gradient(90deg, #010E3D, #06ACE4, #010E3D);
+  --gradient-subtle:        linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+  --gradient-dark:          linear-gradient(180deg, #010E3D 0%, #0D0D0D 100%);
+  --gradient-glass:         linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  --gradient-stats:         linear-gradient(135deg, #010E3D 0%, #06ACE4 100%);
+
+  /* Shadows */
+  --shadow-xs:              0 1px 2px rgba(0,0,0,0.04);
+  --shadow-sm:              0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:              0 4px 6px -1px rgba(0,0,0,0.06), 0 2px 4px -2px rgba(0,0,0,0.04);
+  --shadow-lg:              0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -4px rgba(0,0,0,0.04);
+  --shadow-xl:              0 20px 25px -5px rgba(0,0,0,0.08), 0 8px 10px -6px rgba(0,0,0,0.04);
+  --shadow-2xl:             0 25px 50px -12px rgba(0,0,0,0.15);
+  --shadow-inner:           inset 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-primary:         0 4px 14px rgba(1,14,61,0.25);
+  --shadow-primary-lg:      0 8px 24px rgba(1,14,61,0.3);
+  --shadow-card-hover:      0 20px 40px -10px rgba(1,14,61,0.2);
+
+  /* Border Radius */
+  --radius-xs:              4px;
+  --radius-sm:              6px;
+  --radius-md:              8px;
+  --radius-lg:              12px;
+  --radius-xl:              16px;
+  --radius-2xl:             24px;
+  --radius-full:            9999px;
+
+  /* Spacing */
+  --space-section:          120px;
+  --space-section-mobile:   64px;
+  --space-content:          80px;
+  --space-content-mobile:   40px;
+
+  /* Transitions */
+  --ease-out-expo:          cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart:         cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-sine:       cubic-bezier(0.37, 0, 0.63, 1);
+  --duration-fast:          150ms;
+  --duration-normal:        300ms;
+  --duration-slow:          500ms;
+  --duration-slower:        800ms;
+  --duration-slowest:       1200ms;
+
+  /* Z-Index */
+  --z-dropdown:             50;
+  --z-sticky:               100;
+  --z-overlay:              200;
+  --z-modal:                300;
+  --z-toast:                400;
+  --z-floating-cta:         150;
+}
+
+@theme inline {
+  --color-primary: #010E3D;
+  --color-primary-50: #F0F9FF;
+  --color-primary-100: #E0F4FE;
+  --color-primary-200: #BAE6FD;
+  --color-primary-300: #7DD3F7;
+  --color-primary-400: #38BDF8;
+  --color-primary-500: #010E3D;
+  --color-primary-600: #000A30;
+  --color-primary-700: #000724;
+  --color-primary-800: #00051A;
+  --color-primary-900: #000310;
+  --color-charcoal: #010E3D;
+  --color-slate: #374151;
+  --color-pearl: #F8FAFC;
+  --color-snow: #F1F5F9;
+  --font-display: 'Inter', sans-serif;
+  --font-sans: 'Inter', 'Noto Sans Ethiopic', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+/* ─── Base Typography ─── */
+body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-charcoal);
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* ─── Max Width Container ─── */
+@utility max-w-content {
+  max-width: 1280px;
+}
+
+/* ─── Glass Card Effect ─── */
+.glass-card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* ─── Gradient Background Utilities ─── */
+.bg-gradient-stats {
+  background: linear-gradient(135deg, #010E3D 0%, #06ACE4 100%);
+}
+
+.bg-gradient-hero {
+  background: linear-gradient(135deg, #010E3D 0%, #010E3D 50%, #000A30 100%);
+}
+
+@layer utilities {
+  .text-display-md {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+
+  .section-heading {
+    font-size: clamp(1.6rem, 2.8vw, 2.4rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    line-height: 1.2;
+    margin-bottom: 24px;
+  }
+  .section-heading-dark {
+    color: #010E3D;
+    font-weight: 800;
+  }
+  .section-heading-box {
+    background-color: #06ACE4;
+    color: #ffffff;
+    padding: 0.18em 0.8em;
+    border-radius: 60px;
+    font-weight: 800;
+    display: inline-block;
+    line-height: 1.3;
+    box-shadow: 0 6px 16px rgba(6, 172, 228, 0.25);
+    letter-spacing: -0.01em;
+  }
+
+  /* ─── Heading Hierarchy ─── */
+  .h1 {
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--color-black);
+  }
+
+  .h2 {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--color-black);
+  }
+
+  .h3 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.015em;
+    color: var(--color-charcoal);
+  }
+
+  .h4 {
+    font-size: clamp(1.125rem, 2vw, 1.5rem);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-charcoal);
+  }
+
+  /* ─── Pretitle / Eyebrow Text ─── */
+  .pretitle {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--color-primary);
+    margin-bottom: 0.75rem;
+  }
+
+  /* ─── Body Text Variants ─── */
+  .body-lg {
+    font-size: 1.125rem;
+    line-height: 1.75;
+    color: var(--color-slate);
+  }
+
+  .body-md {
+    font-size: 1rem;
+    line-height: 1.7;
+    color: var(--color-gray);
+  }
+
+  .body-sm {
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: var(--color-gray-light);
+  }
+
+  .caption {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--color-gray-light);
+    letter-spacing: 0.01em;
+  }
+
+  /* ─── Gradient Text ─── */
+  .gradient-text {
+    background: var(--gradient-text);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ─── Section Spacing ─── */
+  .py-section {
+    padding-top: var(--space-section);
+    padding-bottom: var(--space-section);
+  }
+
+  @media (max-width: 768px) {
+    .py-section {
+      padding-top: var(--space-section-mobile);
+      padding-bottom: var(--space-section-mobile);
+    }
+  }
+
+  /* ─── Scrollbar Hide ─── */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* ─── Text Balance ─── */
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ─── Amharic locale override ─── */
+[lang="am"] body {
+  font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
+  line-height: 1.9;
+}
+
+[lang="am"] h1, [lang="am"] h2, [lang="am"] h3 {
+  letter-spacing: 0;
+  line-height: 1.3;
+}
+
+/* ─── Reduced Motion ─── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:share.google)",
+      "WebFetch(domain:www.google.com)",
+      "Bash(curl -sIL \"https://share.google/DS7L0KzU3z3MTn8M1\")",
+      "PowerShell(try { $r = Invoke-WebRequest -Uri \"https://share.google/DS7L0KzU3z3MTn8M1\" -MaximumRedirection 0 -ErrorAction SilentlyContinue } catch { $_.Exception.Response.Headers.Location })",
+      "WebSearch",
+      "WebFetch(domain:yandex.ru)",
+      "WebFetch(domain:yandex.com)",
+      "Bash(npx tsc *)",
+      "Bash(npx eslint *)"
+    ]
+  }
+}

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Straight From Our Customers | SunOptics</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+    --color-primary: #010e3d;
+    --color-accent: #06ace4;
+    --color-glass: rgba(255, 255, 255, 0.75);
+    --color-arc: rgba(15, 35, 80, 0.18);
+    --color-rating: #16a34a;
+    --shadow-lg: 0 25px 45px -12px rgba(1, 14, 61, 0.15), 0 0 0 1px rgba(6, 172, 228, 0.1);
+    --ease-smooth: cubic-bezier(0.65, 0, 0.35, 1);
+  }
+
+  body {
+    background: radial-gradient(circle at 10% 30%, #ffffff 0%, #f3f6fc 100%);
+    font-family: var(--font-sans);
+    color: #1e293b;
+    overflow-x: hidden;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle at 2px 2px, rgba(6,172,228,0.06) 1.5px, transparent 1.5px);
+    background-size: 32px 32px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .testimonial-section {
+    position: relative;
+    z-index: 2;
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 90px 40px 120px;
+  }
+
+  /* ============ HEADER ============ */
+  .title-section {
+    text-align: center;
+    max-width: 860px;
+    margin: 0 auto 80px;
+  }
+  .section-heading {
+    font-size: clamp(2rem, 5vw, 3.6rem);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 28px;
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: baseline;
+    gap: 12px;
+    white-space: nowrap;
+  }
+  .heading-dark {
+    color: var(--color-primary);
+    font-weight: 800;
+  }
+  .heading-box {
+    background-color: var(--color-accent);
+    color: #ffffff;
+    padding: 0.2em 0.9em;
+    border-radius: 60px;
+    font-weight: 800;
+    display: inline-block;
+    line-height: 1.3;
+    box-shadow: 0 8px 20px rgba(6, 172, 228, 0.25);
+    letter-spacing: -0.01em;
+  }
+  .section-subtitle {
+    font-size: 1.15rem;
+    line-height: 1.65;
+    color: #334155;
+    max-width: 660px;
+    margin: 0 auto;
+    font-weight: 450;
+    opacity: 0.9;
+  }
+
+  /* ============ MAIN GRID ============ */
+  .testimonial-grid {
+    display: grid;
+    grid-template-columns: 420px 1fr;
+    gap: 80px;
+    align-items: center;
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  /* ============ LEFT: ARC AREA (unchanged) ============ */
+  .arc-area {
+    position: relative;
+    width: 420px;
+    height: 500px;
+  }
+
+  .arc-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: visible;
+  }
+
+  .arc-path {
+    fill: none;
+    stroke: var(--color-arc);
+    stroke-width: 1.5;
+    stroke-dasharray: 3 6;
+    stroke-linecap: round;
+  }
+
+  .card {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    transition:
+      top 0.85s var(--ease-smooth),
+      left 0.85s var(--ease-smooth),
+      opacity 0.6s ease;
+    will-change: top, left;
+    user-select: none;
+    cursor: pointer;
+  }
+
+  .card-avatar {
+    position: relative;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: #fff;
+    border: 3px solid #fff;
+    box-shadow:
+      0 4px 12px rgba(15, 35, 80, 0.08),
+      0 0 0 1px rgba(15, 35, 80, 0.04);
+    transition: all 0.85s var(--ease-smooth);
+  }
+  .card-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    transition: all 0.85s var(--ease-smooth);
+  }
+  .card-name {
+    color: var(--color-primary);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.2;
+    transition: font-size 0.85s var(--ease-smooth), font-weight 0.5s ease;
+    white-space: nowrap;
+  }
+  .card-rating {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #5b6e8c;
+    font-weight: 500;
+    transition: font-size 0.85s var(--ease-smooth);
+    white-space: nowrap;
+  }
+  .star-icon {
+    fill: var(--color-rating);
+    flex-shrink: 0;
+    transition: width 0.85s var(--ease-smooth), height 0.85s var(--ease-smooth);
+  }
+
+  .card[data-pos="top"] {
+    top: 32px;
+    left: 52px;
+    opacity: 0.7;
+  }
+  .card[data-pos="top"] .card-avatar { width: 58px; height: 58px; }
+  .card[data-pos="top"] .card-name { font-size: 0.95rem; font-weight: 600; }
+  .card[data-pos="top"] .card-rating { font-size: 0.75rem; }
+  .card[data-pos="top"] .star-icon { width: 12px; height: 12px; }
+
+  .card[data-pos="center"] {
+    top: 202px;
+    left: 158px;
+    opacity: 1;
+    z-index: 5;
+  }
+  .card[data-pos="center"] .card-avatar {
+    width: 100px;
+    height: 100px;
+    border-width: 4px;
+    box-shadow:
+      0 14px 36px rgba(6, 172, 228, 0.20),
+      0 0 0 1px rgba(6, 172, 228, 0.12),
+      0 0 0 9px rgba(6, 172, 228, 0.045);
+  }
+  .card[data-pos="center"] .card-name {
+    font-size: 1.7rem;
+    font-weight: 700;
+    background: linear-gradient(125deg, #010e3d, #1f3a6b);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  .card[data-pos="center"] .card-rating { font-size: 1rem; }
+  .card[data-pos="center"] .star-icon { width: 18px; height: 18px; }
+
+  .card[data-pos="bottom"] {
+    top: 412px;
+    left: 52px;
+    opacity: 0.7;
+  }
+  .card[data-pos="bottom"] .card-avatar { width: 58px; height: 58px; }
+  .card[data-pos="bottom"] .card-name { font-size: 0.95rem; font-weight: 600; }
+  .card[data-pos="bottom"] .card-rating { font-size: 0.75rem; }
+  .card[data-pos="bottom"] .star-icon { width: 12px; height: 12px; }
+
+  .card:hover { opacity: 1 !important; }
+
+  .card[data-pos="center"] .card-avatar::after {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(6, 172, 228, 0.25);
+    animation: ringPulse 2.6s ease-in-out infinite;
+  }
+  @keyframes ringPulse {
+    0%, 100% { transform: scale(1); opacity: 0.6; }
+    50%      { transform: scale(1.08); opacity: 0; }
+  }
+
+  /* ============ RIGHT: GLASSMORPHISM QUOTE PANEL ============ */
+  .quote-panel {
+    position: relative;
+    background: var(--color-glass);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 48px;
+    padding: 48px 52px;
+    border: 1px solid rgba(255,255,255,0.7);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .quote-symbol {
+    font-family: 'Inter', serif;
+    font-size: 5rem;
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-accent);
+    opacity: 0.25;
+    margin-bottom: 8px;
+  }
+
+  .quote-text {
+    font-size: 1.45rem;
+    line-height: 1.6;
+    font-weight: 450;
+    color: #0f1a2f;
+    margin: 24px 0 40px;
+    min-height: 9rem;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+  }
+  .quote-text.fade-out {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  .google-badge-premium {
+    display: inline-flex;
+    align-items: center;
+    gap: 14px;
+    background: #ffffff;
+    padding: 10px 24px 10px 20px;
+    border-radius: 100px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02), 0 0 0 1px rgba(0,0,0,0.02);
+  }
+  .google-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .google-icon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .badge-text {
+    font-weight: 600;
+    color: #010e3d;
+    letter-spacing: -0.01em;
+    font-size: 0.9rem;
+  }
+
+  .progress-dots {
+    margin-top: 44px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .dot-group {
+    display: flex;
+    gap: 10px;
+  }
+  .dot-item {
+    width: 32px;
+    height: 4px;
+    border-radius: 4px;
+    background: #dce3ec;
+    transition: all 0.35s ease;
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  .dot-item:hover { background: #b8c2d1; }
+  .dot-item.active {
+    background: var(--color-accent);
+    width: 52px;
+  }
+  .counter-label {
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #5b6e8c;
+    letter-spacing: 0.04em;
+  }
+
+  /* Entrance animation */
+  .testimonial-section > * {
+    animation: rise 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) backwards;
+  }
+  .title-section     { animation-delay: 0.05s; }
+  .testimonial-grid  { animation-delay: 0.25s; }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ============ RESPONSIVE ============ */
+  @media (max-width: 1050px) {
+    .testimonial-grid {
+      grid-template-columns: 1fr;
+      gap: 50px;
+      max-width: 620px;
+      justify-items: center;
+    }
+    .arc-area { margin: 0 auto; }
+    .quote-panel { max-width: 600px; width: 100%; }
+  }
+
+  @media (max-width: 600px) {
+    .section-heading {
+      flex-wrap: wrap !important;
+      white-space: normal;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .testimonial-section { padding: 60px 20px 80px; }
+    .title-section { margin-bottom: 50px; }
+
+    .arc-area {
+      width: 340px;
+      height: 440px;
+    }
+    .card[data-pos="top"]    { top: 24px;  left: 36px; }
+    .card[data-pos="bottom"] { top: 366px; left: 36px; }
+    .card[data-pos="center"] { top: 174px; left: 122px; }
+    .card[data-pos="center"] .card-avatar { width: 86px; height: 86px; }
+    .card[data-pos="center"] .card-name { font-size: 1.4rem; }
+    .card[data-pos="top"] .card-avatar,
+    .card[data-pos="bottom"] .card-avatar { width: 52px; height: 52px; }
+
+    .quote-panel { padding: 32px 28px; border-radius: 36px; }
+    .quote-text { font-size: 1.2rem; min-height: 10rem; }
+    .quote-symbol { font-size: 4rem; }
+  }
+</style>
+</head>
+<body>
+<section class="testimonial-section">
+
+  <!-- HEADER -->
+  <div class="title-section">
+    <div class="section-heading">
+      <span class="heading-dark">Straight From</span>
+      <span class="heading-box">Our Customers</span>
+    </div>
+    <div class="section-subtitle">
+      Real stories of partnership, precision, and lasting results — directly from those who experience SunOptics every day.
+    </div>
+  </div>
+
+  <!-- TESTIMONIAL GRID -->
+  <div class="testimonial-grid" id="stage">
+
+    <!-- LEFT: arc with rotating cards -->
+    <div class="arc-area" id="arcArea">
+      <svg class="arc-svg" viewBox="0 0 420 500" preserveAspectRatio="xMidYMid meet">
+        <path class="arc-path" d="M 80 60 Q 360 250 80 440" />
+      </svg>
+    </div>
+
+    <!-- RIGHT: glassmorphism quote panel -->
+    <div class="quote-panel">
+      <div class="quote-symbol">&ldquo;</div>
+      <div class="quote-text" id="quoteText"></div>
+      <div>
+        <div class="google-badge-premium">
+          <div class="google-icon">
+            <svg viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/>
+              <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 15.1 18.9 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.6 8.4 6.3 14.7z"/>
+              <path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2c-2 1.5-4.5 2.4-7.2 2.4-5.3 0-9.7-3.3-11.3-8l-6.5 5C9.5 39.5 16.2 44 24 44z"/>
+              <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4.1 5.6l6.2 5.2c-.4.4 6.6-4.8 6.6-14.8 0-1.3-.1-2.3-.4-3.5z"/>
+            </svg>
+          </div>
+          <span class="badge-text">Verified Google Review</span>
+        </div>
+      </div>
+      <div class="progress-dots">
+        <div class="dot-group" id="dotGroup"></div>
+        <span class="counter-label" id="counterLabel">01 / 03</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script>
+  const testimonials = [
+    {
+      name: "Edward Alexander",
+      avatar: "https://i.pravatar.cc/220?img=12",
+      rating: "4.9",
+      date: "29 Aug, 2017",
+      text: "The SunOptics team redefined what a partnership should feel like. Every milestone was transparent, the design was flawless, and the final product outperformed every expectation. Truly a seamless journey."
+    },
+    {
+      name: "Diana Johnston",
+      avatar: "https://i.pravatar.cc/220?img=47",
+      rating: "4.9",
+      date: "29 Aug, 2017",
+      text: "Overall pleasurable experience. Pay a little first and then during development milestones — that approach made us feel confident and comfortable. The entire process was smooth, premium, and professionally managed from start to finish."
+    },
+    {
+      name: "Lauren Contreras",
+      avatar: "https://i.pravatar.cc/220?img=45",
+      rating: "4.9",
+      date: "29 Aug, 2017",
+      text: "I've collaborated with many agencies, but SunOptics stands alone. Their attention to detail, speed of execution, and genuine care for our success made the entire engagement feel like a true win-win."
+    }
+  ];
+
+  const POSITIONS = ['top', 'center', 'bottom'];
+  const N = testimonials.length;
+  const INTERVAL_MS = 2800;
+
+  const arcArea     = document.getElementById('arcArea');
+  const quoteText   = document.getElementById('quoteText');
+  const dotGroup    = document.getElementById('dotGroup');
+  const counterEl   = document.getElementById('counterLabel');
+
+  const STAR_SVG = '<svg class="star-icon" viewBox="0 0 24 24"><path d="M12 .5l3.7 7.5 8.3 1.2-6 5.8 1.4 8.3L12 19.4 4.6 23.3 6 15 0 9.2l8.3-1.2L12 .5z"/></svg>';
+
+  const cardEls = [];
+  let cardPos = [0, 1, 2]; // card i → POSITIONS[cardPos[i]]
+
+  // Build cards on the arc
+  testimonials.forEach((t, i) => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.setAttribute('data-pos', POSITIONS[cardPos[i]]);
+    el.innerHTML = `
+      <div class="card-avatar">
+        <img src="${t.avatar}" alt="${t.name}" loading="lazy" />
+      </div>
+      <div class="card-info">
+        <div class="card-name">${t.name}</div>
+        <div class="card-rating">${STAR_SVG}<span>${t.rating} on ${t.date}</span></div>
+      </div>
+    `;
+    el.addEventListener('click', () => goTo(i));
+    arcArea.appendChild(el);
+    cardEls.push(el);
+  });
+
+  // Build progress dots
+  testimonials.forEach((_, i) => {
+    const d = document.createElement('button');
+    d.className = 'dot-item';
+    d.setAttribute('aria-label', `Show testimonial ${i + 1}`);
+    d.addEventListener('click', () => goTo(i));
+    dotGroup.appendChild(d);
+  });
+
+  function centerIndex() {
+    return cardPos.indexOf(1); // index of card currently at 'center'
+  }
+
+  function applyPositions() {
+    cardEls.forEach((el, i) => {
+      el.setAttribute('data-pos', POSITIONS[cardPos[i]]);
+    });
+  }
+
+  function updateQuote(initial = false) {
+    const idx = centerIndex();
+    const t = testimonials[idx];
+
+    const apply = () => {
+      quoteText.textContent = t.text;
+      Array.from(dotGroup.children).forEach((d, i) => {
+        d.classList.toggle('active', i === idx);
+      });
+      counterEl.textContent = String(idx + 1).padStart(2, '0') + ' / ' + String(N).padStart(2, '0');
+    };
+
+    if (initial) { apply(); return; }
+    quoteText.classList.add('fade-out');
+    setTimeout(() => {
+      apply();
+      quoteText.classList.remove('fade-out');
+    }, 350);
+  }
+
+  function tick() {
+    for (let i = 0; i < cardPos.length; i++) {
+      cardPos[i] = (cardPos[i] + 1) % 3;
+    }
+    applyPositions();
+    updateQuote();
+  }
+
+  function goTo(targetCardIdx) {
+    cardEls.forEach((_, i) => {
+      if (i === targetCardIdx)                 cardPos[i] = 1; // center
+      else if (i === (targetCardIdx + N - 1) % N) cardPos[i] = 2; // bottom
+      else                                     cardPos[i] = 0; // top
+    });
+    applyPositions();
+    updateQuote();
+    resetTimer();
+  }
+
+  updateQuote(true);
+
+  let timer = null;
+  function startTimer() { if (!timer) timer = setInterval(tick, INTERVAL_MS); }
+  function stopTimer()  { if (timer) { clearInterval(timer); timer = null; } }
+  function resetTimer() { stopTimer(); startTimer(); }
+  startTimer();
+
+  const stage = document.getElementById('stage');
+  stage.addEventListener('mouseenter', stopTimer);
+  stage.addEventListener('mouseleave', startTimer);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopTimer(); else startTimer();
+  });
+</script>
+</body>
+</html>
