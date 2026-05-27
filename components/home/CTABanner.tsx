@@ -9,17 +9,17 @@ export function CTABanner() {
         <div className="cta-panel text-center">
           {/* Warm gold accent orb — center top */}
           <div className="absolute inset-0 pointer-events-none z-0" style={{
-            background: 'radial-gradient(ellipse at 50% 30%, rgba(201,169,110,0.12) 0%, rgba(201,169,110,0.04) 35%, transparent 65%)',
+            background: 'radial-gradient(ellipse at 50% 30%, rgba(6,172,228,0.12) 0%, rgba(6,172,228,0.04) 35%, transparent 65%)',
             filter: 'blur(50px)',
           }} />
           {/* Warm gold accent orb — bottom right */}
           <div className="absolute bottom-0 right-0 w-[500px] h-[500px] pointer-events-none z-0" style={{
-            background: 'radial-gradient(circle at 80% 80%, rgba(201,169,110,0.16) 0%, rgba(201,169,110,0.05) 40%, transparent 70%)',
+            background: 'radial-gradient(circle at 80% 80%, rgba(6,172,228,0.16) 0%, rgba(6,172,228,0.05) 40%, transparent 70%)',
             filter: 'blur(60px)',
           }} />
           {/* Warm gold accent orb — top left */}
           <div className="absolute top-0 left-0 w-[400px] h-[400px] pointer-events-none z-0" style={{
-            background: 'radial-gradient(circle at 20% 20%, rgba(201,169,110,0.10) 0%, rgba(201,169,110,0.03) 45%, transparent 70%)',
+            background: 'radial-gradient(circle at 20% 20%, rgba(6,172,228,0.10) 0%, rgba(6,172,228,0.03) 45%, transparent 70%)',
             filter: 'blur(55px)',
           }} />
 
@@ -34,9 +34,9 @@ export function CTABanner() {
             </p>
             <Link
               href="/book"
-              className="cta-button"
+              className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-[#06ACE4] px-8 py-4 text-sm font-bold tracking-wide text-white transition-all duration-300 hover:bg-[#0594C6] hover:-translate-y-0.5 whitespace-nowrap shadow-md hover:shadow-[0_8px_30px_rgba(6,172,228,0.4)]"
             >
-              <Calendar size={18} />
+              <Calendar size={18} className="transition-transform duration-300 group-hover:scale-110" />
               Book Your Appointment
             </Link>
           </div>
@@ -49,7 +49,7 @@ export function CTABanner() {
 const CTA_STYLES = `
 .cta-section {
   position: relative;
-  background: #FBF8F3;
+  background: #eefbff;
   overflow: hidden;
 }
 
@@ -63,13 +63,13 @@ const CTA_STYLES = `
 
 .cta-panel {
   position: relative;
-  background: linear-gradient(135deg, #010E3D 0%, #011845 40%, #010E3D 100%);
+  background: linear-gradient(135deg, #06ACE4 0%, #1C3054 40%, #010E3D 100%);
   border-radius: 40px;
   padding: 72px 48px;
-  border: 1px solid rgba(201, 169, 110, 0.15);
+  border: 1px solid rgba(6, 172, 228, 0.15);
   box-shadow:
     0 25px 50px -12px rgba(1, 14, 61, 0.4),
-    0 0 0 1px rgba(201, 169, 110, 0.06);
+    0 0 0 1px rgba(6, 172, 228, 0.06);
   overflow: hidden;
 }
 
@@ -78,7 +78,7 @@ const CTA_STYLES = `
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.2em;
-  color: #C9A96E;
+  color: #06ACE4;
   margin-bottom: 12px;
 }
 
@@ -89,7 +89,7 @@ const CTA_STYLES = `
   letter-spacing: -0.015em;
   line-height: 1.2;
   margin-bottom: 16px;
-  font-style: italic;
+  font-style: normal;
 }
 
 .cta-subtitle {
@@ -105,22 +105,21 @@ const CTA_STYLES = `
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: #C9A96E;
+  background: #06ACE4;
   color: #ffffff;
   border-radius: 9999px;
   padding: 16px 40px;
   font-size: 0.85rem;
-  font-weight: 500;
-  text-transform: uppercase;
+  font-weight: 700;
   letter-spacing: 0.15em;
   transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
 }
 
 .cta-button:hover {
-  background: #b8963e;
+  background: #0594C6;
   transform: translateY(-2px);
-  box-shadow: 0 8px 30px rgba(201, 169, 110, 0.4), 0 4px 12px rgba(201, 169, 110, 0.2);
+  box-shadow: 0 8px 30px rgba(6, 172, 228, 0.4), 0 4px 12px rgba(6, 172, 228, 0.2);
 }
 
 @media (max-width: 720px) {

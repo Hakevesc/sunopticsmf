@@ -1,6 +1,8 @@
 'use client'
 import { useEffect, useRef, useState } from 'react'
 import { ExternalLink, BadgeCheck } from 'lucide-react'
+import { formatDistanceToNow } from 'date-fns'
+import { supabase } from '@/lib/supabase'
 
 interface Review {
   id: string
@@ -10,94 +12,20 @@ interface Review {
   text: string
 }
 
-const reviews: Review[] = [
-  {
-    id: 'samuel-melesse',
-    name: 'Samuel Melesse',
-    rating: '5.0',
-    date: '9 months ago',
-    text: 'I would like to express my sincere appreciation for the exceptional service I received from Melat, one of your staff members. I am writing to commend her outstanding performance.',
-  },
-  {
-    id: 'muhumed-aden',
-    name: 'Muhumed Aden',
-    rating: '5.0',
-    date: '8 months ago',
-    text: 'Sun Optics provides quality services and welcomed professional staff, so if you have any challenges about your eyes, go to Sun Optics — Meskel Flower.',
-  },
-  {
-    id: 'basil-al-attas',
-    name: 'Basil Al-attas',
-    rating: '5.0',
-    date: '3 years ago',
-    text: "Good service with excellent glasses and tests. If you want this service in Addis, it's definitely the place to go.",
-  },
-  {
-    id: 'yonatan-ashenafi',
-    name: 'Yonatan Ashenafi',
-    rating: '5.0',
-    date: 'a year ago',
-    text: "I don't know where to start — everything is very nice. The sales team and optometrist are very helpful, and the clinic looks great.",
-  },
-  {
-    id: 'melat-beyene',
-    name: 'Melat Beyene',
-    rating: '5.0',
-    date: '3 years ago',
-    text: 'Great service with quality glasses. Keep up your good work!',
-  },
-  {
-    id: 'betty-tsehaye',
-    name: 'Betty Tsehaye',
-    rating: '5.0',
-    date: '2 years ago',
-    text: 'It is an amazing place for an eye clinic, and I really like the glasses. Thank you for your wonderful service.',
-  },
-  {
-    id: 'feven-bahiru',
-    name: 'Feven Bahiru',
-    rating: '5.0',
-    date: '3 years ago',
-    text: "It's the best place for an eye clinic and glasses — thanks for your service.",
-  },
-  {
-    id: 'bethelhem-zeleke',
-    name: 'Bethelhem Zeleke',
-    rating: '5.0',
-    date: '3 years ago',
-    text: 'I got good and expeditious treatment, and I also got quality glasses. Thank you very much for the hospitality.',
-  },
-  {
-    id: 'anteneh-ab',
-    name: 'Anteneh Ab',
-    rating: '5.0',
-    date: '3 years ago',
-    text: 'I like the way you approach and treat your customers. Thank you.',
-  },
-  {
-    id: 'yared-siyum',
-    name: 'Yared Siyum',
-    rating: '5.0',
-    date: '3 years ago',
-    text: 'The best eye clinic and glass shop in Addis Ababa.',
-  },
-]
-
-const N = reviews.length
 const INTERVAL_MS = 4200
 const FADE_MS = 350
 
 const AVATAR_GRADIENTS = [
-  'linear-gradient(135deg, #C9A96E 0%, #010E3D 100%)',
-  'linear-gradient(135deg, #D4AF7A 0%, #1E3A5F 100%)',
-  'linear-gradient(135deg, #B8935A 0%, #0A1F40 100%)',
-  'linear-gradient(135deg, #E0C088 0%, #152E55 100%)',
-  'linear-gradient(135deg, #A0804A 0%, #010E3D 100%)',
-  'linear-gradient(135deg, #C9A96E 0%, #2C1810 100%)',
-  'linear-gradient(135deg, #D4B483 0%, #1A0E2E 100%)',
-  'linear-gradient(135deg, #B89B6A 0%, #0D2137 100%)',
-  'linear-gradient(135deg, #DCBE8E 0%, #010E3D 100%)',
-  'linear-gradient(135deg, #C4A265 0%, #1C2D48 100%)',
+  'linear-gradient(135deg, #06ACE4 0%, #010E3D 100%)',
+  'linear-gradient(135deg, #38BDE8 0%, #1E3A5F 100%)',
+  'linear-gradient(135deg, #0594C6 0%, #0A1F40 100%)',
+  'linear-gradient(135deg, #2EC4F0 0%, #152E55 100%)',
+  'linear-gradient(135deg, #048ABC 0%, #010E3D 100%)',
+  'linear-gradient(135deg, #06ACE4 0%, #2C1810 100%)',
+  'linear-gradient(135deg, #38BDE8 0%, #1A0E2E 100%)',
+  'linear-gradient(135deg, #28B4E0 0%, #0D2137 100%)',
+  'linear-gradient(135deg, #4CCCF4 0%, #010E3D 100%)',
+  'linear-gradient(135deg, #06ACE4 0%, #1C2D48 100%)',
 ]
 
 function initials(name: string) {
@@ -108,14 +36,15 @@ function initials(name: string) {
 
 // 5 visible slots + hidden queue:
 //   0 = far-top, 1 = top, 2 = center, 3 = bottom, 4 = far-bottom, 5+ = hidden
-function slotOf(reviewIdx: number, target: number): number {
-  const diff = (reviewIdx - target + N) % N
-  if (diff === 0) return 2          // center
-  if (diff === 1) return 1          // top (next up)
-  if (diff === 2) return 0          // far-top (horizon, incoming)
-  if (diff === N - 1) return 3      // bottom (just shown)
-  if (diff === N - 2) return 4      // far-bottom (horizon, exiting)
-  return diff + 3                   // hidden (5..N)
+function slotOf(reviewIdx: number, target: number, total: number): number {
+  if (total === 0) return 5
+  const diff = (reviewIdx - target + total) % total
+  if (diff === 0) return 2
+  if (diff === 1) return 1
+  if (diff === 2) return 0
+  if (diff === total - 1) return 3
+  if (diff === total - 2) return 4
+  return diff + 3
 }
 
 type Pos = 'far-top' | 'top' | 'center' | 'bottom' | 'far-bottom' | 'hidden'
@@ -129,13 +58,39 @@ function posName(slot: number): Pos {
 }
 
 export function TestimonialsCarousel() {
+  const [reviews, setReviews] = useState<Review[]>([])
   const [centerIdx, setCenterIdx] = useState(0)
   const [fading, setFading] = useState(false)
   const [paused, setPaused] = useState(false)
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const fadeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const featured = reviews[centerIdx]
+  useEffect(() => {
+    async function load() {
+      const { data } = await supabase
+        .from('testimonials')
+        .select('id, author_name, rating, review_text_en, created_at, is_featured')
+        .eq('is_active', true)
+        .order('is_featured', { ascending: false })
+        .order('created_at', { ascending: false })
+
+      if (!data) return
+      const mapped: Review[] = data.map((r) => ({
+        id: r.id,
+        name: r.author_name,
+        rating: Number(r.rating ?? 5).toFixed(1),
+        date: r.created_at
+          ? formatDistanceToNow(new Date(r.created_at), { addSuffix: true })
+          : '',
+        text: r.review_text_en,
+      }))
+      setReviews(mapped)
+    }
+    load()
+  }, [])
+
+  const N = reviews.length
+  const featured = N > 0 ? reviews[centerIdx] : null
 
   const clearTimer = () => {
     if (timerRef.current) {
@@ -166,7 +121,7 @@ export function TestimonialsCarousel() {
   }
 
   useEffect(() => {
-    if (paused) {
+    if (paused || N === 0) {
       clearTimer()
       return
     }
@@ -175,7 +130,7 @@ export function TestimonialsCarousel() {
       triggerFade()
     }, INTERVAL_MS)
     return clearTimer
-  }, [paused])
+  }, [paused, N])
 
   useEffect(() => {
     const onVis = () => setPaused(document.hidden)
@@ -218,7 +173,7 @@ export function TestimonialsCarousel() {
               />
 
               {reviews.map((r, i) => {
-                const slot = slotOf(i, centerIdx)
+                const slot = slotOf(i, centerIdx, N)
                 const pos = posName(slot)
                 const isFar = pos === 'far-top' || pos === 'far-bottom'
                 return (
@@ -281,7 +236,7 @@ export function TestimonialsCarousel() {
 
               {/* Quote body */}
               <div className={`tst-quote-text${fading ? ' tst-fade-out' : ''}`}>
-                {featured.text}
+                {featured ? featured.text : 'Loading reviews…'}
               </div>
             </div>
 
@@ -307,7 +262,7 @@ export function TestimonialsCarousel() {
 const TESTIMONIAL_STYLES = `
 .testimonials-section {
   position: relative;
-  background: #FBF8F3;
+  background: #eefbff;
   overflow: hidden;
   min-height: 100vh;
   display: flex;
@@ -318,7 +273,7 @@ const TESTIMONIAL_STYLES = `
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(circle at 2px 2px, rgba(201,169,110,0.08) 1.5px, transparent 1.5px);
+  background-image: radial-gradient(circle at 2px 2px, rgba(6,172,228,0.08) 1.5px, transparent 1.5px);
   background-size: 32px 32px;
   pointer-events: none;
   z-index: 0;
@@ -351,26 +306,27 @@ const TESTIMONIAL_STYLES = `
   white-space: nowrap;
   line-height: 1.15;
 }
-.tst-heading-dark { color: #010E3D; font-weight: 800; }
+.tst-heading-dark { color: #010E3D; font-weight: 300; }
 .tst-heading-box {
-  background-color: #C9A96E;
+  display: inline-block;
+  background: linear-gradient(135deg, #06ACE4 0%, #38BDE8 100%);
   color: #ffffff;
   padding: 0.18em 0.8em;
-  border-radius: 60px;
-  font-weight: 800;
-  display: inline-block;
+  border-radius: 9999px;
+  font-weight: 400;
+  font-style: normal;
   line-height: 1.3;
-  box-shadow: 0 6px 16px rgba(201, 169, 110, 0.3);
+  font-size: 1em;
   letter-spacing: -0.01em;
 }
 .tst-subtitle {
   font-size: 1rem;
   line-height: 1.6;
-  color: #5C4F3D;
+  color: #010E3D;
   max-width: 620px;
   margin: 0 auto;
   font-weight: 450;
-  opacity: 0.9;
+  opacity: 0.8;
 }
 
 /* GRID */
@@ -402,7 +358,7 @@ const TESTIMONIAL_STYLES = `
 }
 .tst-arc-path {
   fill: none;
-  stroke: rgba(201, 169, 110, 0.22);
+  stroke: rgba(6, 172, 228, 0.22);
   stroke-width: 1.5;
   stroke-dasharray: 3 6;
   stroke-linecap: round;
@@ -441,7 +397,7 @@ const TESTIMONIAL_STYLES = `
   will-change: top, left, opacity;
 }
 .tst-card:focus-visible {
-  outline: 2px solid #C9A96E;
+  outline: 2px solid #06ACE4;
   outline-offset: 4px;
   border-radius: 12px;
 }
@@ -451,10 +407,10 @@ const TESTIMONIAL_STYLES = `
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  border: 3px solid #FBF8F3;
+  border: 3px solid #eefbff;
   box-shadow:
     0 4px 12px rgba(1, 14, 61, 0.08),
-    0 0 0 1px rgba(201, 169, 110, 0.1);
+    0 0 0 1px rgba(6, 172, 228, 0.1);
   transition: all 0.85s cubic-bezier(0.65, 0, 0.35, 1);
   display: flex;
   align-items: center;
@@ -486,13 +442,14 @@ const TESTIMONIAL_STYLES = `
   display: flex;
   align-items: center;
   gap: 6px;
-  color: #7A6D5B;
+  color: #010E3D;
   font-weight: 500;
+  opacity: 0.8;
   transition: font-size 0.85s cubic-bezier(0.65, 0, 0.35, 1);
   white-space: nowrap;
 }
 .tst-star {
-  fill: #E5943A;
+  fill: #06ACE4;
   flex-shrink: 0;
   transition: width 0.85s cubic-bezier(0.65, 0, 0.35, 1), height 0.85s cubic-bezier(0.65, 0, 0.35, 1);
 }
@@ -523,11 +480,11 @@ const TESTIMONIAL_STYLES = `
   width: 100px;
   height: 100px;
   border-width: 4px;
-  border-color: #FBF8F3;
+  border-color: #eefbff;
   box-shadow:
-    0 14px 36px rgba(201, 169, 110, 0.22),
-    0 0 0 1px rgba(201, 169, 110, 0.15),
-    0 0 0 9px rgba(201, 169, 110, 0.06);
+    0 14px 36px rgba(6, 172, 228, 0.22),
+    0 0 0 1px rgba(6, 172, 228, 0.15),
+    0 0 0 9px rgba(6, 172, 228, 0.06);
 }
 .tst-card[data-pos="center"] .tst-card-initials { font-size: 2rem; }
 .tst-card[data-pos="center"] .tst-card-name {
@@ -546,7 +503,7 @@ const TESTIMONIAL_STYLES = `
   position: absolute;
   inset: -10px;
   border-radius: 50%;
-  border: 1.5px solid rgba(201, 169, 110, 0.35);
+  border: 1.5px solid rgba(6, 172, 228, 0.35);
   animation: tstRingPulse 2.6s ease-in-out infinite;
 }
 @keyframes tstRingPulse {
@@ -588,15 +545,15 @@ const TESTIMONIAL_STYLES = `
 /* QUOTE PANEL */
 .tst-quote-panel {
   position: relative;
-  background: linear-gradient(135deg, #C9A96E 0%, #1C3054 40%, #010E3D 100%);
+  background: linear-gradient(135deg, #06ACE4 0%, #1C3054 40%, #010E3D 100%);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-radius: 36px;
   padding: 32px 40px;
-  border: 1px solid rgba(201, 169, 110, 0.15);
+  border: 1px solid rgba(6, 172, 228, 0.15);
   box-shadow:
     0 25px 45px -12px rgba(1, 14, 61, 0.35),
-    0 0 0 1px rgba(201, 169, 110, 0.08);
+    0 0 0 1px rgba(6, 172, 228, 0.08);
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -679,20 +636,20 @@ const TESTIMONIAL_STYLES = `
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #C9A96E;
+  color: #06ACE4;
   font-weight: 600;
   font-size: 0.9rem;
   letter-spacing: 0.01em;
   padding: 10px 24px;
   border-radius: 999px;
-  border: 1px solid rgba(201, 169, 110, 0.35);
+  border: 1px solid rgba(6, 172, 228, 0.35);
   background: transparent;
   transition: all 0.3s ease;
 }
 .tst-view-all-outside:hover {
-  background: #C9A96E;
+  background: #06ACE4;
   color: #ffffff;
-  box-shadow: 0 8px 20px rgba(201, 169, 110, 0.3);
+  box-shadow: 0 8px 20px rgba(6, 172, 228, 0.3);
   transform: translateY(-1.5px);
 }
 

@@ -22,7 +22,7 @@ export function StatsCounter() {
         className="absolute inset-0 pointer-events-none"
         style={{
           background:
-            'linear-gradient(180deg, rgba(201,169,110,0.04) 0%, transparent 40%, transparent 60%, rgba(201,169,110,0.03) 100%)',
+            'linear-gradient(180deg, rgba(6,172,228,0.04) 0%, transparent 40%, transparent 60%, rgba(6,172,228,0.03) 100%)',
         }}
       />
 
@@ -31,7 +31,7 @@ export function StatsCounter() {
         className="absolute top-0 left-0 w-[500px] h-[500px] pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 20% 20%, rgba(201,169,110,0.14) 0%, rgba(201,169,110,0.05) 35%, transparent 65%)',
+            'radial-gradient(circle at 20% 20%, rgba(6,172,228,0.14) 0%, rgba(6,172,228,0.05) 35%, transparent 65%)',
           filter: 'blur(70px)',
         }}
       />
@@ -41,7 +41,7 @@ export function StatsCounter() {
         className="absolute bottom-0 right-0 w-[550px] h-[550px] pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle at 80% 80%, rgba(201,169,110,0.12) 0%, rgba(201,169,110,0.04) 40%, transparent 65%)',
+            'radial-gradient(circle at 80% 80%, rgba(6,172,228,0.12) 0%, rgba(6,172,228,0.04) 40%, transparent 65%)',
           filter: 'blur(80px)',
         }}
       />
@@ -51,7 +51,7 @@ export function StatsCounter() {
         className="absolute top-[-60px] right-[15%] w-[300px] h-[300px] pointer-events-none"
         style={{
           background:
-            'radial-gradient(circle, rgba(201,169,110,0.07) 0%, transparent 60%)',
+            'radial-gradient(circle, rgba(6,172,228,0.07) 0%, transparent 60%)',
           filter: 'blur(50px)',
         }}
       />
@@ -82,7 +82,7 @@ export function StatsCounter() {
                 {stat.suffix && (
                   <span
                     className="text-3xl sm:text-4xl lg:text-[2.8rem] font-bold ml-0.5"
-                    style={{ color: '#C9A96E' }}
+                    style={{ color: '#06ACE4' }}
                   >
                     {stat.suffix}
                   </span>
@@ -92,7 +92,7 @@ export function StatsCounter() {
               {/* Thin gold separator line */}
               <div
                 className="w-10 h-px mt-5 mb-4"
-                style={{ backgroundColor: 'rgba(201,169,110,0.30)' }}
+                style={{ backgroundColor: 'rgba(6,172,228,0.30)' }}
               />
 
               {/* Label */}

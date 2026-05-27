@@ -1,15 +1,14 @@
-
 /* ─── Premium Design Tokens — Warm Luxury Palette ─── */
 :root {
   /* Brand Colors - Deep Navy + Warm Gold */
   --color-primary:          #010E3D; /* Sophisticated deep midnight sapphire */
   --color-primary-dark:     #000A30; /* High-end dark navy */
   --color-primary-darker:   #000724;
-  --color-primary-light:    #FBF8F3; /* Warm cream */
-  --color-primary-lighter:  #FDF9F4;
-  --color-accent:           #C9A96E; /* Warm gold */
-  --color-accent-light:     #D4B87A;
-  --color-accent-dark:      #B8965A;
+  --color-primary-light:    #eefbff; /* Light blue */
+  --color-primary-lighter:  #eefbff;
+  --color-accent:           #06ACE4; /* Vibrant cyan */
+  --color-accent-light:     #38BDE8;
+  --color-accent-dark:      #0594C6;
 
   /* Neutrals - Warm Luxury */
   --color-black:            #0D0D0D;
@@ -18,11 +17,11 @@
   --color-gray:             #6B7280;
   --color-gray-light:       #9CA3AF;
   --color-silver:           #D1D5DB;
-  --color-pearl:            #FBF8F3; /* Warm cream */
-  --color-snow:             #F7F3ED; /* Warm off-white */
+  --color-pearl:            #eefbff; /* Light blue */
+  --color-snow:             #e2f2ff; /* Light blue contrast */
   --color-white:            #FFFFFF;
-  --color-cream:            #FBF8F3;
-  --color-ivory:            #FEFCF7;
+  --color-cream:            #eefbff; /* Light blue */
+  --color-ivory:            #f4f9ff; /* Light blue ivory-tint */
 
   /* Accent / Semantic */
   --color-success:          #059669;
@@ -32,15 +31,15 @@
   --color-error:            #DC2626;
   --color-error-light:      #FEE2E2;
 
-  /* Gradients — Warm Gold-Navy */
+  /* Gradients — Navy-Cyan */
   --gradient-hero:          linear-gradient(135deg, #010E3D 0%, #010E3D 50%, #000A30 100%);
-  --gradient-primary:       linear-gradient(135deg, #010E3D 0%, #C9A96E 100%);
-  --gradient-text:          linear-gradient(90deg, #010E3D, #C9A96E, #010E3D);
+  --gradient-primary:       linear-gradient(135deg, #010E3D 0%, #06ACE4 100%);
+  --gradient-text:          linear-gradient(90deg, #010E3D, #06ACE4, #010E3D);
   --gradient-subtle:        linear-gradient(180deg, #FFFFFF 0%, #FBF8F3 100%);
   --gradient-dark:          linear-gradient(180deg, #010E3D 0%, #0D0D0D 100%);
   --gradient-glass:         linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-  --gradient-stats:         linear-gradient(135deg, #010E3D 0%, #C9A96E 100%);
-  --gradient-gold:          linear-gradient(135deg, #C9A96E 0%, #D4B87A 50%, #B8965A 100%);
+  --gradient-stats:         linear-gradient(135deg, #010E3D 0%, #06ACE4 100%);
+  --gradient-gold:          linear-gradient(135deg, #06ACE4 0%, #38BDE8 50%, #0594C6 100%);
   --gradient-warm:          linear-gradient(180deg, #FBF8F3 0%, #F7F3ED 100%);
 
   /* Shadows */
@@ -54,7 +53,7 @@
   --shadow-primary:         0 4px 14px rgba(1,14,61,0.25);
   --shadow-primary-lg:      0 8px 24px rgba(1,14,61,0.3);
   --shadow-card-hover:      0 20px 40px -10px rgba(1,14,61,0.2);
-  --shadow-gold:            0 4px 14px rgba(201,169,110,0.3);
+  --shadow-gold:            0 4px 14px rgba(6,172,228,0.3);
 
   /* Border Radius */
   --radius-xs:              4px;
@@ -92,28 +91,28 @@
 
 @theme inline {
   --color-primary: #010E3D;
-  --color-primary-50: #FEFCF7;
-  --color-primary-100: #FBF8F3;
-  --color-primary-200: #F7F3ED;
-  --color-primary-300: #D4B87A;
-  --color-primary-400: #C9A96E;
+  --color-primary-50: #eefbff;
+  --color-primary-100: #eefbff;
+  --color-primary-200: #e2f2ff;
+  --color-primary-300: #38BDE8;
+  --color-primary-400: #06ACE4;
   --color-primary-500: #010E3D;
   --color-primary-600: #000A30;
   --color-primary-700: #000724;
   --color-primary-800: #00051A;
   --color-primary-900: #000310;
-  --color-accent: #C9A96E;
-  --color-accent-light: #D4B87A;
-  --color-accent-dark: #B8965A;
+  --color-accent: #06ACE4;
+  --color-accent-light: #38BDE8;
+  --color-accent-dark: #0594C6;
   --color-charcoal: #010E3D;
   --color-slate: #374151;
-  --color-pearl: #FBF8F3;
-  --color-snow: #F7F3ED;
-  --color-cream: #FBF8F3;
-  --color-ivory: #FEFCF7;
-  --color-gold: #C9A96E;
-  --font-display: 'Inter', sans-serif;
-  --font-sans: 'Inter', 'Noto Sans Ethiopic', sans-serif;
+  --color-pearl: #eefbff;
+  --color-snow: #e2f2ff;
+  --color-cream: #eefbff;
+  --color-ivory: #f4f9ff;
+  --color-gold: #06ACE4;
+  --font-display: var(--font-open-sans), sans-serif;
+  --font-sans: var(--font-open-sans), 'Noto Sans Ethiopic', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
@@ -143,7 +142,7 @@ body {
 
 /* ─── Gradient Background Utilities ─── */
 .bg-gradient-stats {
-  background: linear-gradient(135deg, #010E3D 0%, #C9A96E 100%);
+  background: linear-gradient(135deg, #010E3D 0%, #06ACE4 100%);
 }
 
 .bg-gradient-hero {
@@ -151,7 +150,7 @@ body {
 }
 
 .bg-gradient-gold {
-  background: linear-gradient(135deg, #C9A96E 0%, #D4B87A 50%, #B8965A 100%);
+  background: linear-gradient(135deg, #06ACE4 0%, #38BDE8 50%, #0594C6 100%);
 }
 
 .bg-cream {
@@ -182,14 +181,15 @@ body {
     font-weight: 800;
   }
   .section-heading-box {
-    background-color: #C9A96E;
+    display: inline-block;
+    background: linear-gradient(135deg, #06ACE4 0%, #38BDE8 100%);
     color: #ffffff;
     padding: 0.18em 0.8em;
-    border-radius: 60px;
-    font-weight: 800;
-    display: inline-block;
+    border-radius: 9999px;
+    font-weight: 400;
+    font-style: normal;
     line-height: 1.3;
-    box-shadow: 0 6px 16px rgba(201, 169, 110, 0.35);
+    font-size: 1em;
     letter-spacing: -0.01em;
   }
 
@@ -231,7 +231,7 @@ body {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.2em;
-    color: #C9A96E;
+    color: #06ACE4;
     margin-bottom: 0.75rem;
   }
 
@@ -315,4 +315,9 @@ body {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ─── Keyframe Animations ─── */
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }

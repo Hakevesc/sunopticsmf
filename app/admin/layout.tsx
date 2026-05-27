@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { AuthGuard } from "@/components/admin/AuthGuard";
 
 export const metadata: Metadata = {
   title: 'Admin | SunOptics Eye Clinic',
@@ -12,7 +13,7 @@ export default function AdminLayout({
 }) {
   return (
     <div className="min-h-screen bg-gray-50">
-      {children}
+      <AuthGuard>{children}</AuthGuard>
     </div>
   )
 }

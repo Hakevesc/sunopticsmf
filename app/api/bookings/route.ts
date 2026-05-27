@@ -19,7 +19,7 @@ export async function POST(req: Request) {
       booking: {
         id: crypto.randomUUID(),
         ...validated,
-        booking_date: validated.booking_date.toISOString().split('T')[0],
+        booking_date: validated.booking_date,
         status: 'pending',
         created_at: new Date().toISOString(),
       },

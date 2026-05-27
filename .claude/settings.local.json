@@ -9,7 +9,9 @@
       "WebFetch(domain:yandex.ru)",
       "WebFetch(domain:yandex.com)",
       "Bash(npx tsc *)",
-      "Bash(npx eslint *)"
+      "Bash(npx eslint *)",
+      "Bash(npx next *)",
+      "Bash(node scratch/seed-bookings.js)"
     ]
   }
 }

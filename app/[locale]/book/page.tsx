@@ -1,26 +1,27 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Check, ArrowRight, ArrowLeft, ScanEye, Glasses } from 'lucide-react'
+import { Check, ArrowRight, ArrowLeft, ScanEye, Glasses, Calendar, AlertCircle } from 'lucide-react'
 import { bookingSchema, TIME_SLOTS, type BookingFormData } from '@/lib/booking-schema'
+import { supabase } from '@/lib/supabase'
 
 const steps = ['Select Service', 'Date & Time', 'Your Details']
 
-const services = [
-  { id: 'service-1', name_en: 'Computerized Eye Testing', description_en: 'Advanced digital refraction technology for precise prescriptions.', icon_name: 'scan-eye' },
-  { id: 'service-2', name_en: 'Optical Dispensary', description_en: 'Browse our curated collection of premium frames and precision-crafted lenses.', icon_name: 'glasses' },
-]
+interface Service {
+  id: string
+  name_en: string
+  description_en: string | null
+  icon_name: string | null
+}
 
-const glassesOptions = [
-  { id: 'g1', name_en: 'Cat-Eye Black Frame' },
-  { id: 'g2', name_en: 'Classic Round Black Frame' },
-  { id: 'g3', name_en: 'Slim Rectangle Black Frame' },
-  { id: 'g4', name_en: 'Square Tinted Sunglasses' },
-]
+interface GlassOption {
+  id: string
+  name_en: string
+}
 
-function DynamicIcon({ name, size = 22 }: { name: string; size?: number }) {
+function DynamicIcon({ name, size = 22 }: { name: string | null; size?: number }) {
   return name === 'glasses' ? <Glasses size={size} /> : <ScanEye size={size} />
 }
 
@@ -30,7 +31,7 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
       {steps.map((label, i) => (
         <div key={i} className="flex items-center">
           <div className="flex flex-col items-center gap-2">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center 
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center
                             text-sm font-bold transition-all duration-500
               ${i < currentStep
                 ? 'bg-primary text-white shadow-primary'
@@ -56,39 +57,110 @@ function StepIndicator({ currentStep }: { currentStep: number }) {
 
 export default function BookingPage() {
   const [step, setStep] = useState(0)
+  const [services, setServices] = useState<Service[]>([])
+  const [glassesOptions, setGlassesOptions] = useState<GlassOption[]>([])
   const [selectedService, setSelectedService] = useState<string | null>(null)
+  const [selectedDate, setSelectedDate] = useState<string>('')
   const [selectedTime, setSelectedTime] = useState<string | null>(null)
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [bookingRef, setBookingRef] = useState('')
+  const [submitError, setSubmitError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   const {
     register,
     handleSubmit,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<BookingFormData>({
     resolver: zodResolver(bookingSchema),
   })
 
-  const watchedService = watch('service_id')
+  // Fetch services + glasses from DB
+  useEffect(() => {
+    async function fetchOptions() {
+      const { data: svc } = await supabase
+        .from('services')
+        .select('id, name_en, description_en, icon_name')
+        .eq('is_active', true)
+        .order('display_order', { ascending: true })
+
+      if (svc && svc.length > 0) setServices(svc as Service[])
+
+      const { data: g } = await supabase
+        .from('glasses')
+        .select('id, name_en')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(20)
+
+      if (g) setGlassesOptions(g as GlassOption[])
+    }
+    fetchOptions()
+  }, [])
 
   const handleServiceSelect = (serviceId: string) => {
     setSelectedService(serviceId)
-    setValue('service_id', serviceId)
+    setValue('service_id', serviceId, { shouldValidate: true })
+  }
+
+  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+    setSelectedDate(value)
+    setValue('booking_date', value, { shouldValidate: true })
   }
 
   const handleTimeSelect = (time: string) => {
     setSelectedTime(time)
-    setValue('booking_time', time)
+    setValue('booking_time', time, { shouldValidate: true })
   }
 
   const onSubmit = async (data: BookingFormData) => {
-    // Simulate booking submission
-    const ref = Math.random().toString(36).substring(2, 10).toUpperCase()
-    setBookingRef(ref)
-    setIsSubmitted(true)
+    setSubmitting(true)
+    setSubmitError('')
+
+    try {
+      const payload = {
+        first_name: data.first_name,
+        last_name: data.last_name,
+        email: data.email,
+        phone: data.phone,
+        address: data.address || null,
+        service_id: data.service_id,
+        booking_date: data.booking_date,
+        booking_time: data.booking_time,
+        reason: data.reason || null,
+        special_requests: data.special_requests || null,
+        glasses_interest: data.glasses_interest && data.glasses_interest.length > 0
+          ? data.glasses_interest
+          : null,
+        status: 'pending',
+      }
+
+      const { data: inserted, error } = await supabase
+        .from('bookings')
+        .insert(payload)
+        .select('id')
+        .single()
+
+      if (error || !inserted) {
+        throw new Error(error?.message || 'Failed to submit booking')
+      }
+
+      setBookingRef(inserted.id.slice(0, 8).toUpperCase())
+      setIsSubmitted(true)
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Could not submit booking. Please try again.')
+    } finally {
+      setSubmitting(false)
+    }
   }
+
+  // Minimum bookable date = today
+  const today = new Date().toISOString().split('T')[0]
+
+  const selectedServiceObj = services.find(s => s.id === selectedService)
+  const isOpticalDispensary = selectedServiceObj?.name_en?.toLowerCase().includes('optical')
 
   return (
     <section className="py-section mt-20">
@@ -112,11 +184,15 @@ export default function BookingPage() {
                 >
                   <div className="grid gap-4">
                     <p className="text-sm font-medium text-charcoal mb-2">Select a Service</p>
+                    {services.length === 0 && (
+                      <p className="text-sm text-gray-400">Loading services...</p>
+                    )}
                     {services.map((service) => (
                       <button
                         key={service.id}
+                        type="button"
                         onClick={() => handleServiceSelect(service.id)}
-                        className={`relative p-6 rounded-2xl border-2 text-left 
+                        className={`relative p-6 rounded-2xl border-2 text-left
                                     transition-all duration-300
                           ${selectedService === service.id
                             ? 'border-primary bg-primary-50 shadow-primary'
@@ -131,11 +207,13 @@ export default function BookingPage() {
                           </div>
                           <div className="text-left">
                             <h3 className="font-semibold text-charcoal">{service.name_en}</h3>
-                            <p className="text-sm text-gray-500 mt-1">{service.description_en}</p>
+                            {service.description_en && (
+                              <p className="text-sm text-gray-500 mt-1">{service.description_en}</p>
+                            )}
                           </div>
                         </div>
                         {selectedService === service.id && (
-                          <div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-primary 
+                          <div className="absolute top-4 right-4 w-6 h-6 rounded-full bg-primary
                                           flex items-center justify-center">
                             <Check size={14} className="text-white" />
                           </div>
@@ -144,8 +222,7 @@ export default function BookingPage() {
                     ))}
                   </div>
 
-                  {/* Glasses interest for Optical Dispensary */}
-                  {selectedService === 'service-2' && (
+                  {isOpticalDispensary && glassesOptions.length > 0 && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
@@ -157,10 +234,10 @@ export default function BookingPage() {
                       <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto">
                         {glassesOptions.map((g) => (
                           <label key={g.id}
-                            className="flex items-center gap-2.5 text-sm cursor-pointer 
+                            className="flex items-center gap-2.5 text-sm cursor-pointer
                                        p-2 rounded-lg hover:bg-primary-100/50 transition-colors">
                             <input type="checkbox" value={g.id} {...register('glasses_interest')}
-                              className="rounded border-gray-300 text-primary 
+                              className="rounded border-gray-300 text-primary
                                          focus:ring-primary/30" />
                             {g.name_en}
                           </label>
@@ -171,9 +248,10 @@ export default function BookingPage() {
 
                   <div className="flex justify-end mt-8">
                     <button
+                      type="button"
                       onClick={() => setStep(1)}
                       disabled={!selectedService}
-                      className="inline-flex items-center gap-2 bg-primary text-white 
+                      className="inline-flex items-center gap-2 bg-primary text-white
                                  rounded-full px-8 py-3 text-sm font-medium
                                  hover:bg-primary-dark transition-all duration-300
                                  disabled:opacity-50 disabled:cursor-not-allowed"
@@ -191,11 +269,34 @@ export default function BookingPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                 >
+                  <div className="mb-6">
+                    <label htmlFor="booking-date" className="block text-sm font-medium text-charcoal mb-2">
+                      Select a Date
+                    </label>
+                    <div className="relative">
+                      <Calendar size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                      <input
+                        id="booking-date"
+                        type="date"
+                        min={today}
+                        value={selectedDate}
+                        onChange={handleDateChange}
+                        className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200
+                                   text-sm focus:border-primary focus:ring-1 focus:ring-primary/30
+                                   transition-all duration-300 outline-none"
+                      />
+                    </div>
+                    {errors.booking_date && (
+                      <p className="text-xs text-red-500 mt-1">{errors.booking_date.message}</p>
+                    )}
+                  </div>
+
                   <p className="text-sm font-medium text-charcoal mb-4">Select a Time Slot</p>
                   <div className="grid grid-cols-4 gap-2">
                     {TIME_SLOTS.map((time) => (
                       <button
                         key={time}
+                        type="button"
                         onClick={() => handleTimeSelect(time)}
                         className={`py-2.5 rounded-xl text-sm font-medium transition-all duration-300
                           ${selectedTime === time
@@ -209,16 +310,18 @@ export default function BookingPage() {
 
                   <div className="flex justify-between mt-8">
                     <button
+                      type="button"
                       onClick={() => setStep(0)}
-                      className="inline-flex items-center gap-2 text-gray-500 
+                      className="inline-flex items-center gap-2 text-gray-500
                                  hover:text-charcoal transition-all duration-300"
                     >
                       <ArrowLeft size={16} /> Back
                     </button>
                     <button
+                      type="button"
                       onClick={() => setStep(2)}
-                      disabled={!selectedTime}
-                      className="inline-flex items-center gap-2 bg-primary text-white 
+                      disabled={!selectedTime || !selectedDate}
+                      className="inline-flex items-center gap-2 bg-primary text-white
                                  rounded-full px-8 py-3 text-sm font-medium
                                  hover:bg-primary-dark transition-all duration-300
                                  disabled:opacity-50 disabled:cursor-not-allowed"
@@ -237,11 +340,18 @@ export default function BookingPage() {
                   exit={{ opacity: 0, x: -20 }}
                 >
                   <form onSubmit={handleSubmit(onSubmit)}>
+                    {submitError && (
+                      <div className="mb-6 flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-600">
+                        <AlertCircle size={16} className="mt-0.5 flex-shrink-0" />
+                        <span>{submitError}</span>
+                      </div>
+                    )}
+
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-charcoal mb-1">First Name</label>
                         <input {...register('first_name')}
-                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200
                                    text-sm focus:border-primary focus:ring-1 focus:ring-primary/30
                                    transition-all duration-300 outline-none"
                           placeholder="Your first name" />
@@ -250,7 +360,7 @@ export default function BookingPage() {
                       <div>
                         <label className="block text-sm font-medium text-charcoal mb-1">Last Name</label>
                         <input {...register('last_name')}
-                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200
                                    text-sm focus:border-primary focus:ring-1 focus:ring-primary/30
                                    transition-all duration-300 outline-none"
                           placeholder="Your last name" />
@@ -259,7 +369,7 @@ export default function BookingPage() {
                       <div>
                         <label className="block text-sm font-medium text-charcoal mb-1">Email</label>
                         <input type="email" {...register('email')}
-                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200
                                    text-sm focus:border-primary focus:ring-1 focus:ring-primary/30
                                    transition-all duration-300 outline-none"
                           placeholder="your@email.com" />
@@ -268,7 +378,7 @@ export default function BookingPage() {
                       <div>
                         <label className="block text-sm font-medium text-charcoal mb-1">Phone</label>
                         <input type="tel" {...register('phone')}
-                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200
                                    text-sm focus:border-primary focus:ring-1 focus:ring-primary/30
                                    transition-all duration-300 outline-none"
                           placeholder="09XX XXX XXX" />
@@ -277,7 +387,7 @@ export default function BookingPage() {
                       <div className="md:col-span-2">
                         <label className="block text-sm font-medium text-charcoal mb-1">Address (Optional)</label>
                         <input {...register('address')}
-                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200
                                    text-sm focus:border-primary focus:ring-1 focus:ring-primary/30
                                    transition-all duration-300 outline-none"
                           placeholder="Your address" />
@@ -286,7 +396,7 @@ export default function BookingPage() {
                         <label className="block text-sm font-medium text-charcoal mb-1">Special Requests (Optional)</label>
                         <textarea {...register('special_requests')}
                           rows={3}
-                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 
+                          className="w-full px-4 py-2.5 rounded-xl border border-gray-200
                                    text-sm focus:border-primary focus:ring-1 focus:ring-primary/30
                                    transition-all duration-300 outline-none resize-none"
                           placeholder="Any special requests..." />
@@ -297,18 +407,20 @@ export default function BookingPage() {
                       <button
                         type="button"
                         onClick={() => setStep(1)}
-                        className="inline-flex items-center gap-2 text-gray-500 
+                        className="inline-flex items-center gap-2 text-gray-500
                                    hover:text-charcoal transition-all duration-300"
                       >
                         <ArrowLeft size={16} /> Back
                       </button>
                       <button
                         type="submit"
-                        className="inline-flex items-center gap-2 bg-primary text-white 
+                        disabled={submitting}
+                        className="inline-flex items-center gap-2 bg-primary text-white
                                    rounded-full px-10 py-3 text-sm font-medium
-                                   hover:bg-primary-dark transition-all duration-300"
+                                   hover:bg-primary-dark transition-all duration-300
+                                   disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        Book Now <ArrowRight size={16} />
+                        {submitting ? 'Submitting...' : 'Book Now'} <ArrowRight size={16} />
                       </button>
                     </div>
                   </form>
@@ -326,16 +438,16 @@ export default function BookingPage() {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-              className="w-20 h-20 bg-green-50 rounded-full flex items-center 
+              className="w-20 h-20 bg-green-50 rounded-full flex items-center
                          justify-center mx-auto mb-6"
             >
               <Check className="text-green-600 w-10 h-10" />
             </motion.div>
             <h2 className="text-2xl font-bold text-charcoal mb-3">Booking Confirmed!</h2>
             <p className="text-gray-500 mb-2">
-              We'll contact you to confirm your appointment.
+              We&apos;ll contact you to confirm your appointment.
             </p>
-            <div className="inline-flex items-center gap-2 bg-primary-50 rounded-full 
+            <div className="inline-flex items-center gap-2 bg-primary-50 rounded-full
                             px-5 py-2 mt-4">
               <span className="text-xs text-primary font-medium">Reference:</span>
               <span className="text-sm text-primary font-bold font-mono">

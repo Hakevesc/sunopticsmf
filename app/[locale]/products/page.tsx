@@ -1,5 +1,6 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { supabase } from '@/lib/supabase'
 import { motion, AnimatePresence } from 'framer-motion'
 import { GlassCard } from '@/components/products/GlassCard'
 
@@ -36,7 +37,7 @@ const categories = [
 ]
 
 // ─── Glasses Data (with lens category & need associations) ───
-const glasses = [
+const STATIC_GLASSES = [
   { id: '1',  name_en: 'Cat-Eye Black Frame',            glass_code: '28 011 52 17-140 C5', image_url: '/Glasses/Cat-Eye  Butterfly.webp', category_slug: 'cat-eye-butterfly', glass_categories: { name_en: 'Cat-Eye / Butterfly' }, lens_category_slugs: ['correct-your-vision'], lens_need_slugs: ['for-kids', 'far-vision'] },
   { id: '2',  name_en: 'Soft Cat-Eye Black Frame',        glass_code: '28 098 51 15-140 C1', image_url: '/Glasses/Cat-Eye.webp', category_slug: 'cat-eye-butterfly', glass_categories: { name_en: 'Cat-Eye / Butterfly' }, lens_category_slugs: ['correct-your-vision', 'enhance-your-vision'], lens_need_slugs: ['near-vision', 'light-sensitivity'] },
   { id: '3',  name_en: 'Matte Brown/Taupe Frame',         glass_code: '72 043 51 19 148 C6', image_url: '/Glasses/Rounded Rectangle.webp', category_slug: 'rounded-rectangle', glass_categories: { name_en: 'Rounded Rectangle' }, lens_category_slugs: ['correct-your-vision', 'protect-your-eyes'], lens_need_slugs: ['for-kids', 'blue-light-protection'] },
@@ -136,8 +137,8 @@ function FilterSidebar({
           ))}
         </AccordionSection>
 
-        {/* Needs — collapsed by default */}
-        <AccordionSection title="Need">
+        {/* Needs — open by default */}
+        <AccordionSection title="Need" defaultOpen={true}>
           {lensNeeds.map((need) => (
             <button key={need.id}
               onClick={() => handleSelect(onNeedChange, need.id)}
@@ -147,8 +148,8 @@ function FilterSidebar({
           ))}
         </AccordionSection>
 
-        {/* Frame Shape — collapsed by default */}
-        <AccordionSection title="Frame Shape">
+        {/* Frame Shape — open by default */}
+        <AccordionSection title="Frame Shape" defaultOpen={true}>
           {categories.map((cat) => (
             <button key={cat.id}
               onClick={() => handleSelect(onCategoryChange, cat.id)}
@@ -163,10 +164,79 @@ function FilterSidebar({
 }
 
 export default function ProductsPage() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [glasses, setGlasses] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  void STATIC_GLASSES // kept as reference data; products come from DB
   const [activeCategory, setActiveCategory] = useState('all')
   const [activeLensCategory, setActiveLensCategory] = useState('all')
   const [activeNeed, setActiveNeed] = useState('all')
   const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const { data: glassesData, error: glassesError } = await supabase
+          .from('glasses')
+          .select(`
+            id, name_en, name_am, glass_code, image_url, 
+            is_featured, is_new, price_range, description_en,
+            glass_categories ( name_en, slug )
+          `)
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+
+        if (glassesError) throw glassesError
+
+        if (glassesData) {
+          // Fetch junctions
+          const { data: lcData } = await supabase
+            .from('glasses_lens_categories')
+            .select('glass_id, lens_categories ( slug )')
+
+          const { data: lnData } = await supabase
+            .from('glasses_lens_needs')
+            .select('glass_id, lens_needs ( slug )')
+
+          const lcMap: Record<string, string[]> = {}
+          lcData?.forEach((row: any) => {
+            if (!lcMap[row.glass_id]) lcMap[row.glass_id] = []
+            if (row.lens_categories?.slug) lcMap[row.glass_id].push(row.lens_categories.slug)
+          })
+
+          const lnMap: Record<string, string[]> = {}
+          lnData?.forEach((row: any) => {
+            if (!lnMap[row.glass_id]) lnMap[row.glass_id] = []
+            if (row.lens_needs?.slug) lnMap[row.glass_id].push(row.lens_needs.slug)
+          })
+
+          const mapped = glassesData.map((g: any) => ({
+            id: g.id,
+            name_en: g.name_en,
+            name_am: g.name_am || '',
+            glass_code: g.glass_code || '',
+            image_url: g.image_url || '',
+            is_featured: g.is_featured || false,
+            is_new: g.is_new || false,
+            price_range: g.price_range || '',
+            description_en: g.description_en || '',
+            category_slug: g.glass_categories?.slug || '',
+            glass_categories: g.glass_categories ? { name_en: g.glass_categories.name_en } : undefined,
+            lens_category_slugs: lcMap[g.id] || [],
+            lens_need_slugs: lnMap[g.id] || [],
+          }))
+
+          setGlasses(mapped)
+        }
+      } catch (err) {
+        console.error('Error fetching products from database:', err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchProducts()
+  }, [])
 
   // Filter by frame shape category
   const filteredByCategory = activeCategory === 'all'
@@ -190,74 +260,82 @@ export default function ProductsPage() {
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative py-20 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-stats" />
-        <div className="max-w-content mx-auto px-6 lg:px-8 text-center">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70 mb-6">
-            Our Collection
-          </p>
-          <h1 className="text-[clamp(2.5rem,5vw,4rem)] text-white font-extrabold mb-6">
-            Premium Eyewear
-          </h1>
-          <p className="text-lg text-white/70 max-w-2xl mx-auto">
-            Discover our curated selection of frames — designed for comfort,
-            crafted for style.
-          </p>
-        </div>
-      </section>
-
-      {/* Mobile Filter Toggle */}
-      <div className="lg:hidden bg-white border-b border-gray-100 sticky top-20 z-40">
-        <div className="max-w-content mx-auto px-6 lg:px-8 py-3">
-          <button onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="flex items-center gap-2 w-full justify-center px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:border-primary hover:text-primary transition-all">
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V17a1 1 0 01-.553.894l-4 2A1 1 0 019 19v-5.586L3.293 6.707A1 1 0 013 6V4z" />
-            </svg>
-            Filters
-            {activeFilterCount > 0 && (
-              <span className="bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
-
-          {/* Mobile sidebar drawer */}
-          {sidebarOpen && (
-            <>
-              <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setSidebarOpen(false)} />
-              <div className="fixed inset-y-0 left-0 w-72 bg-white z-50 overflow-y-auto p-6 shadow-xl">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold text-gray-900">Filters</h2>
-                  <button onClick={() => setSidebarOpen(false)}
-                    title="Close filters"
-                    className="p-1 text-gray-400 hover:text-gray-600">
-                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                </div>
-                <FilterSidebar
-                  activeLensCategory={activeLensCategory}
-                  activeNeed={activeNeed}
-                  activeCategory={activeCategory}
-                  onLensCategoryChange={setActiveLensCategory}
-                  onNeedChange={setActiveNeed}
-                  onCategoryChange={setActiveCategory}
-                  onClose={() => setSidebarOpen(false)}
-                />
-              </div>
-            </>
-          )}
-        </div>
-      </div>
-
-      {/* Main Content Area — Sidebar + Grid */}
-      <section className="py-section bg-snow">
+      <section className="py-20 lg:py-28 bg-white overflow-hidden">
         <div className="max-w-content mx-auto px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+          
+          {/* Page Header */}
+          <div className="text-center mb-14 lg:mb-20">
+            <motion.p
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-sm font-medium uppercase tracking-[0.2em] text-accent mb-4"
+            >
+              Our Collection
+            </motion.p>
+            <motion.h1
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.1 }}
+              className="text-3xl lg:text-[2.75rem] font-light text-primary tracking-tight leading-tight mb-4"
+            >
+              Premium Eyewear
+            </motion.h1>
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55, delay: 0.2 }}
+              className="text-base text-gray-500 max-w-2xl mx-auto"
+            >
+              Discover our curated selection of frames — designed for comfort, crafted for style.
+            </motion.p>
+          </div>
 
+          {/* Mobile Filter Toggle */}
+          <div className="lg:hidden bg-white border-b border-gray-100 sticky top-20 z-40 mb-8 py-3">
+            <button onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="flex items-center gap-2 w-full justify-center px-4 py-2.5 border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:border-primary hover:text-primary transition-all">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2a1 1 0 01-.293.707L15 13.414V17a1 1 0 01-.553.894l-4 2A1 1 0 019 19v-5.586L3.293 6.707A1 1 0 013 6V4z" />
+              </svg>
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="bg-primary text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
+
+            {/* Mobile sidebar drawer */}
+            {sidebarOpen && (
+              <>
+                <div className="fixed inset-0 bg-black/30 z-40" onClick={() => setSidebarOpen(false)} />
+                <div className="fixed inset-y-0 left-0 w-72 bg-white z-50 overflow-y-auto p-6 shadow-xl">
+                  <div className="flex items-center justify-between mb-6">
+                    <h2 className="text-lg font-bold text-gray-900">Filters</h2>
+                    <button onClick={() => setSidebarOpen(false)}
+                      title="Close filters"
+                      className="p-1 text-gray-400 hover:text-gray-600">
+                      <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  </div>
+                  <FilterSidebar
+                    activeLensCategory={activeLensCategory}
+                    activeNeed={activeNeed}
+                    activeCategory={activeCategory}
+                    onLensCategoryChange={setActiveLensCategory}
+                    onNeedChange={setActiveNeed}
+                    onCategoryChange={setActiveCategory}
+                    onClose={() => setSidebarOpen(false)}
+                  />
+                </div>
+              </>
+            )}
+          </div>
+
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
             {/* Left Sidebar — Desktop */}
             <div className="hidden lg:block">
               <FilterSidebar
@@ -331,11 +409,17 @@ export default function ProductsPage() {
                 </AnimatePresence>
               </motion.div>
 
-              {/* Empty state */}
+              {/* Empty / loading state */}
               {filteredGlasses.length === 0 && (
                 <div className="text-center py-20">
-                  <p className="text-gray-400 text-lg mb-2">No frames match your criteria</p>
-                  <p className="text-gray-300 text-sm">Try adjusting the filters on the left</p>
+                  {loading ? (
+                    <p className="text-gray-400 text-lg">Loading frames…</p>
+                  ) : (
+                    <>
+                      <p className="text-gray-400 text-lg mb-2">No frames match your criteria</p>
+                      <p className="text-gray-300 text-sm">Try adjusting the filters on the left</p>
+                    </>
+                  )}
                 </div>
               )}
             </div>

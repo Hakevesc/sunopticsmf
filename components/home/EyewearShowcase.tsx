@@ -1,17 +1,25 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
+import { supabase } from '@/lib/supabase'
 
-const frames = [
-  { name: 'Cat-Eye Butterfly', image: '/Glasses/Cat-Eye  Butterfly.webp' },
-  { name: 'Round Classic', image: '/Glasses/Round.webp' },
-  { name: 'Soft Corner Rectangle', image: '/Glasses/Soft Corner Rectangle.webp' },
-  { name: 'Oval Rounded', image: '/Glasses/Oval-Rounded.webp' },
-  { name: 'Rounded Rectangle', image: '/Glasses/Rounded Rectangle.webp' },
-  { name: 'Sunglasses', image: '/Glasses/Sunglasses.webp' },
+interface ShowcaseFrame {
+  id: string
+  name: string
+  image: string
+}
+
+const FALLBACK_FRAMES: ShowcaseFrame[] = [
+  { id: 'f1', name: 'Cat-Eye Butterfly', image: '/Glasses/Cat-Eye  Butterfly.webp' },
+  { id: 'f2', name: 'Round Classic', image: '/Glasses/Round.webp' },
+  { id: 'f3', name: 'Soft Corner Rectangle', image: '/Glasses/Soft Corner Rectangle.webp' },
+  { id: 'f4', name: 'Oval Rounded', image: '/Glasses/Oval-Rounded.webp' },
+  { id: 'f5', name: 'Rounded Rectangle', image: '/Glasses/Rounded Rectangle.webp' },
+  { id: 'f6', name: 'Sunglasses', image: '/Glasses/Sunglasses.webp' },
 ]
 
 const containerVariants = {
@@ -37,6 +45,45 @@ const cardVariants = {
 }
 
 export function EyewearShowcase() {
+  const [frames, setFrames] = useState<ShowcaseFrame[]>(FALLBACK_FRAMES)
+
+  useEffect(() => {
+    async function loadFrames() {
+      // Prefer featured products; fall back to most recently added
+      const { data: featured } = await supabase
+        .from('glasses')
+        .select('id, name_en, image_url')
+        .eq('is_active', true)
+        .eq('is_featured', true)
+        .order('created_at', { ascending: false })
+        .limit(6)
+
+      let rows = featured || []
+      if (rows.length < 6) {
+        const { data: latest } = await supabase
+          .from('glasses')
+          .select('id, name_en, image_url')
+          .eq('is_active', true)
+          .order('created_at', { ascending: false })
+          .limit(6)
+        rows = latest || []
+      }
+
+      if (rows.length > 0) {
+        setFrames(
+          rows
+            .filter(r => !!r.image_url)
+            .map(r => ({
+              id: r.id,
+              name: r.name_en,
+              image: r.image_url as string,
+            }))
+        )
+      }
+    }
+    loadFrames()
+  }, [])
+
   return (
     <section className="relative bg-white py-20 lg:py-28 overflow-hidden">
       <style>{SHOWCASE_STYLES}</style>
@@ -49,7 +96,7 @@ export function EyewearShowcase() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="text-sm font-medium uppercase tracking-[0.2em] text-[#C9A96E] mb-4"
+            className="text-sm font-medium uppercase tracking-[0.2em] text-[#06ACE4] mb-4"
           >
             Featured Collection
           </motion.p>
@@ -75,18 +122,18 @@ export function EyewearShowcase() {
         >
           {frames.map((frame) => (
             <motion.div
-              key={frame.name}
+              key={frame.id}
               variants={cardVariants}
               className="showcase-card group"
             >
-              <div className="aspect-square relative overflow-hidden rounded-t-2xl bg-[#FAFAF8]">
+              <div className="aspect-[4/3] relative overflow-hidden rounded-t-2xl bg-[#eefbff]">
                 <div className="absolute inset-0 flex items-center justify-center p-6 lg:p-10">
                   <Image
                     src={frame.image}
                     alt={frame.name}
                     fill
                     sizes="(max-width: 768px) 50vw, 33vw"
-                    className="object-contain transition-transform duration-500 ease-out group-hover:scale-108"
+                    className="object-contain transition-transform duration-500 ease-out group-hover:scale-108 mix-blend-multiply"
                   />
                 </div>
               </div>
@@ -108,7 +155,7 @@ export function EyewearShowcase() {
           className="text-center mt-12 lg:mt-16"
         >
           <Link
-            href="/collection"
+            href="/products"
             className="showcase-link group/link"
           >
             View Full Collection
@@ -126,24 +173,25 @@ export function EyewearShowcase() {
 const SHOWCASE_STYLES = `
 .showcase-style-badge {
   display: inline-block;
-  background: linear-gradient(135deg, #C9A96E 0%, #DFC08A 100%);
+  background: linear-gradient(135deg, #06ACE4 0%, #38BDE8 100%);
   color: #ffffff;
-  padding: 4px 20px;
+  padding: 0.18em 0.8em;
   border-radius: 9999px;
   font-weight: 400;
-  font-style: italic;
+  font-style: normal;
+  font-size: 1em;
 }
 
 .showcase-card {
   background: #ffffff;
-  border: 1px solid rgba(201, 169, 110, 0.12);
-  border-radius: 1rem;
+  border: 1px solid rgba(6, 172, 228, 0.12);
+  border-radius: 1.5rem;
   overflow: hidden;
   transition: box-shadow 0.4s cubic-bezier(0.4, 0, 0.2, 1), transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .showcase-card:hover {
-  box-shadow: 0 12px 40px rgba(201, 169, 110, 0.14), 0 4px 16px rgba(1, 14, 61, 0.06);
+  box-shadow: 0 12px 40px rgba(6, 172, 228, 0.14);
   transform: translateY(-2px);
 }
 
@@ -151,7 +199,7 @@ const SHOWCASE_STYLES = `
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #C9A96E;
+  color: #06ACE4;
   font-size: 0.9rem;
   font-weight: 500;
   letter-spacing: 0.08em;
@@ -160,6 +208,6 @@ const SHOWCASE_STYLES = `
 }
 
 .showcase-link:hover {
-  color: #b8963e;
+  color: #0594C6;
 }
 `

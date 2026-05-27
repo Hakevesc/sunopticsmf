@@ -11,7 +11,9 @@ export default function HomePage() {
   return (
     <>
       <HeroCarousel />
-      <BenefitsStrip />
+      <div className="md:hidden">
+        <BenefitsStrip />
+      </div>
       <EditorialSplit />
       <ServicesSection />
       <EyewearShowcase />

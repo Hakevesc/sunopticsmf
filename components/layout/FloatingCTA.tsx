@@ -23,9 +23,9 @@ export function FloatingCTA() {
           className="fixed bottom-8 right-8 z-[150]"
         >
           <Link href="/book"
-            className="flex items-center gap-2.5 bg-[#C9A96E] text-white 
-                       rounded-full px-6 py-3.5 text-sm font-medium
-                       shadow-[0_8px_24px_rgba(201,169,110,0.35)] hover:bg-[#B8965A]
+            className="flex items-center gap-2.5 bg-[#06ACE4] text-white
+                       rounded-full px-6 py-3.5 text-sm font-bold
+                       shadow-[0_8px_24px_rgba(6,172,228,0.35)] hover:bg-[#0594C6]
                        hover:shadow-2xl transform hover:-translate-y-0.5
                        transition-all duration-300">
             <Calendar size={18} />

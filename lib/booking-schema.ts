@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const bookingSchema = z.object({
   service_id:        z.string().min(1, 'Please select a service'),
   staff_id:          z.string().optional(),
-  booking_date:      z.date({ message: 'Please select a date' }),
+  booking_date:      z.string().min(1, 'Please select a date'),
   booking_time:      z.string().min(1, 'Please select a time slot'),
   first_name:        z.string().min(1, 'First name required'),
   last_name:         z.string().min(1, 'Last name required'),

@@ -3,7 +3,7 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, ScanEye, Glasses, type LucideIcon } from 'lucide-react'
+import { ArrowRight, ScanEye, Glasses, Check, type LucideIcon } from 'lucide-react'
 
 interface Service {
   id: string
@@ -11,6 +11,7 @@ interface Service {
   description: string
   icon: LucideIcon
   image: string
+  features?: string[]
 }
 
 const services: Service[] = [
@@ -21,6 +22,12 @@ const services: Service[] = [
       'Advanced digital refraction technology for precise prescriptions. Our state-of-the-art equipment ensures accurate diagnosis and personalized vision solutions.',
     icon: ScanEye,
     image: '/Assets/eye-test.jpg',
+    features: [
+      'Digital auto-refraction',
+      'Subjective verification',
+      'Color vision testing',
+      'Visual field screening',
+    ],
   },
   {
     id: 'optical-dispensary',
@@ -29,6 +36,12 @@ const services: Service[] = [
       'Browse our curated collection of premium frames and precision-crafted lenses. Expert fitting and personalized style consultation included.',
     icon: Glasses,
     image: '/Assets/glass-choice.jpg',
+    features: [
+      '200+ premium frames',
+      'Precision lens crafting',
+      'Expert fitting service',
+      'Style consultation',
+    ],
   },
 ]
 
@@ -55,9 +68,9 @@ const cardVariants = {
   },
 }
 
-export function ServicesSection() {
+export function ServicesSection({ isPage = false }: { isPage?: boolean }) {
   return (
-    <section className="bg-white py-16 md:py-[120px]">
+    <section id="services-list" className={`${isPage ? 'bg-[#eefbff]' : 'bg-white'} py-16 md:py-[120px]`}>
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         {/* Section Header */}
         <motion.div
@@ -68,14 +81,14 @@ export function ServicesSection() {
           className="mb-14 text-center md:mb-16"
         >
           {/* Eyebrow */}
-          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#C9A96E]">
+          <p className="mb-4 text-sm font-semibold uppercase tracking-[0.2em] text-[#06ACE4]">
             What We Offer
           </p>
 
           {/* Heading */}
           <h2 className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-4xl font-light tracking-tight text-[#1a1a2e] md:text-5xl">
             <span>Exceptional Eye Care</span>
-            <span className="inline-block rounded-full bg-[#C9A96E] px-5 py-1.5 text-[0.6em] font-semibold tracking-wide text-white">
+            <span className="inline-block rounded-full bg-gradient-to-r from-[#06ACE4] to-[#38BDE8] px-5 py-1.5 text-[1em] font-normal tracking-wide text-white leading-tight">
               Services
             </span>
           </h2>
@@ -95,7 +108,7 @@ export function ServicesSection() {
               <motion.div
                 key={service.id}
                 variants={cardVariants}
-                className="group overflow-hidden rounded-2xl border border-[#f0ebe3] bg-white transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_-12px_rgba(120,90,50,0.15)]"
+                className="group overflow-hidden rounded-2xl border border-[#06ACE4]/12 bg-white transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_12px_40px_rgba(6,172,228,0.14)]"
               >
                 {/* Image */}
                 <div className="relative aspect-[16/10] overflow-hidden">
@@ -112,7 +125,7 @@ export function ServicesSection() {
                 {/* Content */}
                 <div className="p-7 md:p-8">
                   {/* Icon */}
-                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#C9A96E]/10 text-[#C9A96E] transition-colors duration-300 group-hover:bg-[#C9A96E]/15">
+                  <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-[#06ACE4]/10 text-[#06ACE4] transition-colors duration-300 group-hover:bg-[#06ACE4]/15">
                     <Icon size={22} strokeWidth={1.8} />
                   </div>
 
@@ -124,16 +137,37 @@ export function ServicesSection() {
                     {service.description}
                   </p>
 
-                  <Link
-                    href={`/services#${service.id}`}
-                    className="group/link inline-flex items-center gap-2 text-sm font-semibold text-[#C9A96E] transition-all duration-300 hover:gap-3"
-                  >
-                    <span className="relative">
-                      Learn More
-                      <span className="absolute -bottom-0.5 left-0 h-[1.5px] w-0 bg-[#C9A96E] transition-all duration-300 group-hover/link:w-full" />
-                    </span>
-                    <ArrowRight size={14} className="transition-transform duration-300 group-hover/link:translate-x-0.5" />
-                  </Link>
+                  {isPage && service.features && (
+                    <ul className="space-y-3 mb-8">
+                      {service.features.map((feature, fIdx) => (
+                        <li key={fIdx} className="flex items-center gap-3 text-[#010E3D]/80 text-sm font-light">
+                          <Check size={16} className="text-[#06ACE4] flex-shrink-0" strokeWidth={2.5} />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+
+                  {isPage ? (
+                    <Link
+                      href="/book"
+                      className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-[#06ACE4] px-8 py-3.5 text-sm font-bold tracking-wide text-white transition-all duration-300 hover:bg-[#0594C6] hover:-translate-y-0.5 whitespace-nowrap shadow-md hover:shadow-[0_8px_24px_rgba(6,172,228,0.35)]"
+                    >
+                      Book Service
+                      <ArrowRight size={16} className="transition-transform duration-300 group-hover:translate-x-1" />
+                    </Link>
+                  ) : (
+                    <Link
+                      href={`/services#${service.id}`}
+                      className="group/link inline-flex items-center gap-2 text-sm font-semibold text-[#06ACE4] transition-all duration-300 hover:gap-3"
+                    >
+                      <span className="relative">
+                        Learn More
+                        <span className="absolute -bottom-0.5 left-0 h-[1.5px] w-0 bg-[#06ACE4] transition-all duration-300 group-hover/link:w-full" />
+                      </span>
+                      <ArrowRight size={14} className="transition-transform duration-300 group-hover/link:translate-x-0.5" />
+                    </Link>
+                  )}
                 </div>
               </motion.div>
             )

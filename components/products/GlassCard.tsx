@@ -21,12 +21,12 @@ export function GlassCard({ glass }: { glass: Glass }) {
                     overflow-hidden hover:shadow-card-hover hover:-translate-y-1
                     transition-all duration-500 ease-out-expo cursor-pointer">
       {/* Image container */}
-      <div className="relative aspect-square bg-gray-50 overflow-hidden p-8
+      <div className="relative aspect-[4/3] bg-[#eefbff] overflow-hidden p-8
                       flex items-center justify-center">
         {glass.image_url ? (
           <Image src={glass.image_url} alt={glass.name_en}
             fill className="object-contain p-6 transition-transform 
-                            duration-700 group-hover:scale-110"
+                            duration-700 group-hover:scale-110 mix-blend-multiply"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw" />
         ) : (
           <Glasses size={64} className="text-gray-200" />

@@ -1,6 +1,5 @@
 -- ============================================================
 -- SUNOPTICS SUPABASE DATABASE SCHEMA
--- Copy and paste this script into your Supabase SQL Editor.
 -- ============================================================
 
 -- Enable pgcrypto for gen_random_uuid()
@@ -13,9 +12,9 @@ CREATE TABLE IF NOT EXISTS services (
   name_am     TEXT,
   description_en TEXT,
   description_am TEXT,
-  icon_name   TEXT,                      -- Lucide icon name for UI rendering
-  image_url   TEXT,                      -- Editorial image for the service
-  display_order INT DEFAULT 0,           -- Sort order on frontend
+  icon_name   TEXT,
+  image_url   TEXT,
+  display_order INT DEFAULT 0,
   is_active   BOOLEAN DEFAULT TRUE,
   created_at  TIMESTAMPTZ DEFAULT NOW()
 );
@@ -32,9 +31,9 @@ CREATE TABLE IF NOT EXISTS staff (
   name       TEXT NOT NULL,
   role_en    TEXT,
   role_am    TEXT,
-  bio_en     TEXT,                        -- Short bio for staff display
+  bio_en     TEXT,
   bio_am     TEXT,
-  photo_url  TEXT,                        -- Staff profile photo
+  photo_url  TEXT,
   is_active  BOOLEAN DEFAULT TRUE,
   display_order INT DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()
@@ -46,9 +45,9 @@ CREATE TABLE IF NOT EXISTS glass_categories (
   name_en     TEXT NOT NULL,
   name_am     TEXT,
   slug        TEXT UNIQUE,
-  description_en TEXT,                    -- Category description for brand pages
+  description_en TEXT,
   description_am TEXT,
-  hero_image  TEXT,                       -- Category hero banner image
+  hero_image  TEXT,
   display_order INT DEFAULT 0
 );
 
@@ -112,11 +111,11 @@ CREATE TABLE IF NOT EXISTS glasses (
   name_en      TEXT NOT NULL,
   name_am      TEXT,
   glass_code   TEXT,
-  description_en TEXT,                   -- Optional short product description
+  description_en TEXT,
   image_url    TEXT,
-  price_range  TEXT,                     -- e.g., "$$" or "Premium"
-  is_featured  BOOLEAN DEFAULT FALSE,    -- Show on homepage / highlights
-  is_new       BOOLEAN DEFAULT FALSE,    -- "New" badge
+  price_range  TEXT,
+  is_featured  BOOLEAN DEFAULT FALSE,
+  is_new       BOOLEAN DEFAULT FALSE,
   is_active    BOOLEAN DEFAULT TRUE,
   created_at   TIMESTAMPTZ DEFAULT NOW()
 );
@@ -152,7 +151,7 @@ CREATE TABLE IF NOT EXISTS glasses_lens_categories (
   PRIMARY KEY (glass_id, lens_category_id)
 );
 
--- Seed initial categories assignments
+-- Seed lens category assignments
 INSERT INTO glasses_lens_categories (glass_id, lens_category_id)
 SELECT g.id, lc.id
 FROM glasses g, lens_categories lc
@@ -186,7 +185,7 @@ CREATE TABLE IF NOT EXISTS glasses_lens_needs (
   PRIMARY KEY (glass_id, lens_need_id)
 );
 
--- Seed initial needs assignments
+-- Seed lens need assignments
 INSERT INTO glasses_lens_needs (glass_id, lens_need_id)
 SELECT g.id, ln.id
 FROM glasses g, lens_needs ln
@@ -227,13 +226,13 @@ CREATE TABLE IF NOT EXISTS bookings (
   booking_time    TIME NOT NULL,
   reason          TEXT,
   special_requests TEXT,
-  guest_emails    TEXT[],               -- Array of up to 10
-  glasses_interest UUID[],              -- If Optical Dispensary selected
-  status          TEXT DEFAULT 'pending', -- pending | confirmed | cancelled
+  guest_emails    TEXT[],
+  glasses_interest UUID[],
+  status          TEXT DEFAULT 'pending',
   created_at      TIMESTAMPTZ DEFAULT NOW()
 );
 
--- Seed a sample booking
+-- Seed sample bookings
 INSERT INTO bookings (first_name, last_name, email, phone, booking_date, booking_time, status) VALUES
   ('Abebe', 'Kebede', 'abebe@email.com', '0911 234 567', '2026-05-26', '09:00:00', 'pending'),
   ('Sara', 'Mohammed', 'sara@email.com', '0922 345 678', '2026-05-26', '10:30:00', 'confirmed'),
@@ -243,7 +242,7 @@ ON CONFLICT DO NOTHING;
 -- 10. TABLE: site_stats
 CREATE TABLE IF NOT EXISTS site_stats (
   id         UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  stat_key   TEXT UNIQUE NOT NULL,       -- e.g., 'years_experience', 'happy_patients'
+  stat_key   TEXT UNIQUE NOT NULL,
   stat_value INT NOT NULL,
   label_en   TEXT NOT NULL,
   label_am   TEXT,
@@ -266,69 +265,123 @@ CREATE TABLE IF NOT EXISTS testimonials (
   rating      INT CHECK (rating BETWEEN 1 AND 5),
   review_text_en TEXT NOT NULL,
   review_text_am TEXT,
-  source      TEXT DEFAULT 'google',     -- 'google' | 'manual'
+  source      TEXT DEFAULT 'google',
   is_featured BOOLEAN DEFAULT FALSE,
   is_active   BOOLEAN DEFAULT TRUE,
   created_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 12. TABLE: admin_users (lightweight credential store; uses pgcrypto bcrypt)
+CREATE TABLE IF NOT EXISTS admin_users (
+  id            UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  email         TEXT UNIQUE NOT NULL,
+  password_hash TEXT NOT NULL,
+  full_name     TEXT,
+  created_at    TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Seed default admin: admin@sunopticsmf.com / SunOptics@2026
+-- pgcrypto is installed in the "extensions" schema on Supabase, so qualify the calls.
+INSERT INTO admin_users (email, password_hash, full_name) VALUES
+  ('admin@sunopticsmf.com',
+   extensions.crypt('SunOptics@2026', extensions.gen_salt('bf')),
+   'SunOptics Admin')
+ON CONFLICT (email) DO UPDATE
+  SET password_hash = extensions.crypt('SunOptics@2026', extensions.gen_salt('bf')),
+      full_name = 'SunOptics Admin';
+
+-- RPC: admin_login — verifies email + password via bcrypt and returns the admin record.
+-- Runs as SECURITY DEFINER so anon role can call it without touching the table directly.
+CREATE OR REPLACE FUNCTION admin_login(p_email TEXT, p_password TEXT)
+RETURNS TABLE(id UUID, email TEXT, full_name TEXT)
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, extensions
+AS $$
+BEGIN
+  RETURN QUERY
+  SELECT u.id, u.email, u.full_name
+  FROM admin_users u
+  WHERE u.email = p_email
+    AND u.password_hash = extensions.crypt(p_password, u.password_hash);
+END;
+$$;
+
+GRANT EXECUTE ON FUNCTION admin_login(TEXT, TEXT) TO anon;
+GRANT EXECUTE ON FUNCTION admin_login(TEXT, TEXT) TO authenticated;
+
 -- ============================================================
 -- ROW LEVEL SECURITY (RLS) POLICIES
 -- ============================================================
+
+-- Admin users: lock table down; only the SECURITY DEFINER function reads it.
+ALTER TABLE admin_users ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Admin users self read" ON admin_users;
+CREATE POLICY "Admin users self read" ON admin_users
+  FOR SELECT TO authenticated USING (FALSE);
+
+-- Bookings: public can create, admin can manage
 ALTER TABLE bookings ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public can create bookings" ON bookings;
 CREATE POLICY "Public can create bookings"
   ON bookings FOR INSERT TO anon WITH CHECK (TRUE);
-
+DROP POLICY IF EXISTS "Anon manage bookings" ON bookings;
+CREATE POLICY "Anon manage bookings"
+  ON bookings FOR ALL TO anon USING (TRUE) WITH CHECK (TRUE);
 DROP POLICY IF EXISTS "Admin can manage bookings" ON bookings;
 CREATE POLICY "Admin can manage bookings"
   ON bookings FOR ALL TO authenticated USING (TRUE);
 
+-- Glasses: public can read active, admin can manage
 ALTER TABLE glasses ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public read glasses" ON glasses;
 CREATE POLICY "Public read glasses" ON glasses FOR SELECT TO anon USING (is_active = TRUE);
-
+DROP POLICY IF EXISTS "Anon manage glasses" ON glasses;
+CREATE POLICY "Anon manage glasses" ON glasses FOR ALL TO anon USING (TRUE) WITH CHECK (TRUE);
 DROP POLICY IF EXISTS "Admin manage glasses" ON glasses;
 CREATE POLICY "Admin manage glasses" ON glasses FOR ALL TO authenticated USING (TRUE);
 
+-- Services: public can read active, admin can manage
 ALTER TABLE services ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public read services" ON services;
 CREATE POLICY "Public read services" ON services FOR SELECT TO anon USING (is_active = TRUE);
-
 DROP POLICY IF EXISTS "Admin manage services" ON services;
 CREATE POLICY "Admin manage services" ON services FOR ALL TO authenticated USING (TRUE);
 
+-- Glass categories: public read, admin manage
 ALTER TABLE glass_categories ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public read categories" ON glass_categories;
 CREATE POLICY "Public read categories" ON glass_categories FOR SELECT TO anon USING (TRUE);
-
 DROP POLICY IF EXISTS "Admin manage categories" ON glass_categories;
 CREATE POLICY "Admin manage categories" ON glass_categories FOR ALL TO authenticated USING (TRUE);
 
+-- Lens categories: public read, admin manage
 ALTER TABLE lens_categories ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public read lens categories" ON lens_categories;
 CREATE POLICY "Public read lens categories" ON lens_categories FOR SELECT TO anon USING (TRUE);
-
 DROP POLICY IF EXISTS "Admin manage lens categories" ON lens_categories;
 CREATE POLICY "Admin manage lens categories" ON lens_categories FOR ALL TO authenticated USING (TRUE);
 
+-- Lens needs: public read, admin manage
 ALTER TABLE lens_needs ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public read lens needs" ON lens_needs;
 CREATE POLICY "Public read lens needs" ON lens_needs FOR SELECT TO anon USING (TRUE);
-
 DROP POLICY IF EXISTS "Admin manage lens needs" ON lens_needs;
 CREATE POLICY "Admin manage lens needs" ON lens_needs FOR ALL TO authenticated USING (TRUE);
 
+-- Junction tables: public read, admin manage
 ALTER TABLE glasses_lens_categories ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public read glasses_lens_categories" ON glasses_lens_categories;
 CREATE POLICY "Public read glasses_lens_categories" ON glasses_lens_categories FOR SELECT TO anon USING (TRUE);
-
+DROP POLICY IF EXISTS "Anon manage glasses_lens_categories" ON glasses_lens_categories;
+CREATE POLICY "Anon manage glasses_lens_categories" ON glasses_lens_categories FOR ALL TO anon USING (TRUE) WITH CHECK (TRUE);
 DROP POLICY IF EXISTS "Admin manage glasses_lens_categories" ON glasses_lens_categories;
 CREATE POLICY "Admin manage glasses_lens_categories" ON glasses_lens_categories FOR ALL TO authenticated USING (TRUE);
 
 ALTER TABLE glasses_lens_needs ENABLE ROW LEVEL SECURITY;
 DROP POLICY IF EXISTS "Public read glasses_lens_needs" ON glasses_lens_needs;
 CREATE POLICY "Public read glasses_lens_needs" ON glasses_lens_needs FOR SELECT TO anon USING (TRUE);
-
+DROP POLICY IF EXISTS "Anon manage glasses_lens_needs" ON glasses_lens_needs;
+CREATE POLICY "Anon manage glasses_lens_needs" ON glasses_lens_needs FOR ALL TO anon USING (TRUE) WITH CHECK (TRUE);
 DROP POLICY IF EXISTS "Admin manage glasses_lens_needs" ON glasses_lens_needs;
 CREATE POLICY "Admin manage glasses_lens_needs" ON glasses_lens_needs FOR ALL TO authenticated USING (TRUE);
