@@ -1,7 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { Calendar, Users, Eye, ShieldCheck, MessageSquare } from 'lucide-react'
+import { Calendar, Users, Eye, ShieldCheck, MessageSquare, Megaphone } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 
 interface Counts {
@@ -45,6 +45,7 @@ export default function AdminDashboard() {
     { href: '/admin/products',     label: 'Products',     icon: Users,           desc: 'Manage eyewear products',     count: fmt(counts.products) },
     { href: '/admin/testimonials', label: 'Testimonials', icon: MessageSquare,   desc: 'Manage customer reviews',     count: fmt(counts.testimonials) },
     { href: '/admin/account',      label: 'Account',      icon: ShieldCheck,     desc: 'Admin users & login',         count: fmt(counts.admins) },
+    { href: '/admin/popups',       label: 'Popups',       icon: Megaphone,       desc: 'Manage popup ads',            count: '→' },
   ]
 
   return (
@@ -54,7 +55,7 @@ export default function AdminDashboard() {
         <p className="text-gray-500 mt-1">Manage your clinic&apos;s content and bookings.</p>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {adminCards.map((card) => (
           <Link key={card.href} href={card.href}
             className="bg-white rounded-2xl border border-gray-100 p-6
